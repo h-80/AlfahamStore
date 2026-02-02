@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الأقسام الموحدة</title>
+
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700&display=swap');
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;width:100%;height:100%;font-family:'Cairo',sans-serif;overflow-x:hidden;background:url('https://c.top4top.io/p_36090k7by0.png') center/cover no-repeat;}
+.wrapper{width:100%;max-width:1100px;padding:10px;margin:auto;}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:clamp(8px,1vw,12px);justify-items:center;}
+.card{background-color:rgba(255,255,255,0.92);border-radius:10px;width:100%;max-width:120px;padding:5px;text-decoration:none;display:flex;flex-direction:column;align-items:center;transition:transform 0.2s ease;cursor:pointer;}
+@media(hover:hover){.card:hover{transform:scale(1.05);}}
+.card img{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:8px;display:block;}
+.card-title{margin-top:4px;font-size:clamp(11px,1.5vw,13px);color:#000;text-align:center;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#playerPage{position:fixed;inset:0;background:#000;display:none;z-index:9999;}
+#video{width:100%;height:100%;background:#000;}
+#qualityBtn{position:absolute;bottom:60px;left:15px;z-index:10000;background:rgba(0,0,0,0.6);color:#fff;border:none;padding:6px 12px;border-radius:5px;cursor:pointer;font-weight:bold;font-size:14px;display:none;}
+#qualityList{position:absolute;bottom:100px;left:15px;z-index:10000;background:rgba(0,0,0,0.7);border-radius:5px;padding:5px;display:none;}
+#qualityList div{color:#fff;padding:4px 10px;cursor:pointer;}
+#qualityList div:hover{background:rgba(255,255,255,0.2);}
+#youtubePlayer{position:fixed;top:0;left:0;width:100%;height:45%;background:#000;display:none;z-index:9999;}
+#youtubeFrame{width:100%;height:100%;border:none;position:relative;z-index:1;}
+#ytPoster{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:2;display:none;}
+</style>
+</head>
+<body>
+
+<!-- الواجهة الرئيسية -->
+<div class="wrapper" id="home">
+  <div class="grid">
+    <a href="section:A1" class="card"><img src="https://raw.githubusercontent.com/h-80/img/refs/heads/main/A%20(6).png"><div class="card-title">قنوات عربية</div></a>
+    <a href="section:A2" class="card"><img src="https://raw.githubusercontent.com/h-80/img/refs/heads/main/A%20(7).png"><div class="card-title">قنوات عالمية</div></a>
+    <a href="section:A3" class="card"><img src="https://raw.githubusercontent.com/h-80/img/refs/heads/main/A%20(2).png"><div class="card-title">قنوات أخبار</div></a>
+    <a href="section:A4" class="card"><img src="https://raw.githubusercontent.com/h-80/img/refs/heads/main/A%20(3).png"><div class="card-title">قنوات وثائقية</div></a>
+    <a href="section:A5" class="card"><img src="https://raw.githubusercontent.com/h-80/img/refs/heads/main/A%20(1).png"><div class="card-title">قنوات دينية</div></a>
+    <a href="section:A6" class="card"><img src="https://raw.githubusercontent.com/h-80/img/refs/heads/main/A%20(9).png"><div class="card-title">قنوات دراما</div></a>
+    <a href="section:A7" class="card"><img src="https://raw.githubusercontent.com/h-80/img/refs/heads/main/A%20(8).png"><div class="card-title">قنوات أفلام</div></a>
+    <a href="section:A8" class="card"><img src="https://raw.githubusercontent.com/h-80/img/refs/heads/main/A%20(5).png"><div class="card-title">قنوات أطفال</div></a>
+    <a href="section:A9" class="card"><img src="https://raw.githubusercontent.com/h-80/img/refs/heads/main/A%20(4).png"><div class="card-title">قنوات الطبخ</div></a>
+    <a href="section:A10" class="card"><img src="https://raw.githubusercontent.com/h-80/img/refs/heads/main/sports%20(1).png"><div class="card-title">قنوات رياضية</div></a>
+    <a href="section:A11" class="card"><img src="https://raw.githubusercontent.com/h-80/img/refs/heads/main/Alfaham%20tube.png"><div class="card-title">Alfaham Tube</div></a>
+  </div>
+</div>
+
+<!-- قسم A1 -->
+<div class="wrapper section" id="A1" style="display:none;"><div class="grid">
+  <div class="card" data-stream=""><img src="https://raw.githubusercontent.com/h-80/img/refs/heads/main/AlfahamTV.png"><div class="card-title">قناة 1</div></div>
+</div></div>
+<!-- قسم A2 -->
+<div class="wrapper section" id="A2" style="display:none;"><div class="grid">
+  <div class="card" data-stream=""><img src="https://raw.githubusercontent.com/h-80/img/refs/heads/main/AlfahamTV.png"><div class="card-title">قناة 1</div></div>
+</div></div>
+<!-- قسم A3 -->
+<div class="wrapper section" id="A3" style="display:none;"><div class="grid">
+  <div class="card" data-stream=""><img src="https://raw.githubusercontent.com/h-80/img/refs/heads/main/AlfahamTV.png"><div class="card-title">قناة 1</div></div>
+</div></div>
+<!-- قسم A4 -->
+<div class="wrapper section" id="A4" style="display:none;"><div class="grid">
+  <div class="card" data-stream=""><img src="https://raw.githubusercontent.com/h-80/img/refs/heads/main/AlfahamTV.png"><div class="card-title">قناة 1</div></div>
+</div></div>
+<!-- قسم A5 -->
+<div class="wrapper section" id="A5" style="display:none;"><div class="grid">
+  <div class="card" data-stream=""><img src="https://raw.githubusercontent.com/h-80/img/refs/heads/main/AlfahamTV.png"><div class="card-title">قناة 1</div></div>
+</div></div>
+<!-- قسم A6 -->
+<div class="wrapper section" id="A6" style="display:none;"><div class="grid">
+  <div class="card" data-stream=""><img src="https://raw.githubusercontent.com/h-80/img/refs/heads/main/AlfahamTV.png"><div class="card-title">قناة 1</div></div>
+</div></div>
+<!-- قسم A7 -->
+<div class="wrapper section" id="A7" style="display:none;"><div class="grid">
+  <div class="card" data-stream=""><img src="https://raw.githubusercontent.com/h-80/img/refs/heads/main/AlfahamTV.png"><div class="card-title">قناة 1</div></div>
+</div></div>
+<!-- قسم A8 -->
+<div class="wrapper section" id="A8" style="display:none;"><div class="grid">
+  <div class="card" data-stream=""><img src="https://raw.githubusercontent.com/h-80/img/refs/heads/main/AlfahamTV.png"><div class="card-title">قناة 1</div></div>
+</div></div>
+<!-- قسم A9 -->
+<div class="wrapper section" id="A9" style="display:none;"><div class="grid">
+  <div class="card" data-stream=""><img src="https://raw.githubusercontent.com/h-80/img/refs/heads/main/AlfahamTV.png"><div class="card-title">قناة 1</div></div>
+</div></div>
+
+<!-- قسم رياضة A10 -->
+<div class="wrapper section" id="A10" style="display:none;"><div class="grid">
+  <div class="card" data-stream="https://cdn.catiacast.video/abr/8d2ffb0aba244e8d9101a9488a7daa05/playlist.m3u8"><img src="https://raw.githubusercontent.com/h-80/img/refs/heads/main/bn%20(1).png"><div class="card-title">beIN SPORTS 1</div></div>
+  <div class="card" data-stream="http://135.125.109.73:9000/beinsport2_.m3u8"><img src="https://raw.githubusercontent.com/h-80/img/refs/heads/main/bn%20(2).png"><div class="card-title">beIN SPORTS 2</div></div>
+  <div class="card" data-stream="http://135.125.109.73:9000/beinsport3_.m3u8"><img src="https://raw.githubusercontent.com/h-80/img/refs/heads/main/bn%20(3).png"><div class="card-title">beIN SPORTS 3</div></div>
+  <div class="card" data-stream="http://135.125.109.73:9000/beinsport4_.m3u8"><img src="https://raw.githubusercontent.com/h-80/img/refs/heads/main/bn%20(4).png"><div class="card-title">beIN SPORTS 4</div></div>
+</div></div>
+<!-- قسم Alfaham Tube A11 -->
+<div class="wrapper section" id="A11" style="display:none;"><div class="grid">
+  <div class="card" data-stream="https://www.youtube.com/watch?v=vZK-QcsOyAU" data-title="القران الكريم"></div>
+  <div class="card" data-stream="https://m.youtube.com/watch?v=c5hprs7TI7A" data-title="القران الكريم"></div>
+  <div class="card" data-stream="https://m.youtube.com/watch?v=NtU8gkRHRjQ" data-title="كربلاء البث المباشر"></div>
+</div></div>
+
+<!-- مشغل HLS -->
+<div id="playerPage">
+  <video id="video" controls autoplay playsinline></video>
+  <button id="qualityBtn">HD</button>
+  <div id="qualityList"></div>
+</div>
+
+<!-- مشغل YouTube -->
+<div id="youtubePlayer">
+  <img id="ytPoster">
+  <iframe id="youtubeFrame" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+</div>
+
+<script>
+// التعامل مع الأقسام
+const home = document.getElementById("home");
+const sections = document.querySelectorAll(".section");
+home.querySelectorAll(".card").forEach(card=>{
+  card.addEventListener('click', e=>{
+    e.preventDefault();
+    const target = card.getAttribute("href").split(":")[1];
+    sections.forEach(s=>s.style.display="none");
+    document.getElementById(target).style.display="block";
+    home.style.display="none";
+  });
+});
+
+// مشغل HLS للقنوات الرياضية
+const hlsCards = document.querySelectorAll("#A10 .card");
+const video = document.getElementById("video");
+const playerPage = document.getElementById("playerPage");
+const qualityBtn = document.getElementById("qualityBtn");
+const qualityList = document.getElementById("qualityList");
+let hlsInstance = null;
+
+hlsCards.forEach(card=>{
+  card.addEventListener('click', ()=>{
+    const streamURL = card.dataset.stream;
+    playerPage.style.display="block";
+    if(hlsInstance){hlsInstance.destroy();hlsInstance=null;}
+    if(Hls.isSupported()){
+      hlsInstance = new Hls({startLevel:-1,maxBufferLength:5,maxMaxBufferLength:10,capLevelToPlayerSize:true,enableWorker:true,backBufferLength:3});
+      hlsInstance.loadSource(streamURL);
+      hlsInstance.attachMedia(video);
+      hlsInstance.on(Hls.Events.MANIFEST_PARSED,(event,data)=>{
+        if(data.levels && data.levels.length>1){
+          qualityBtn.style.display="block";
+          qualityList.innerHTML="";
+          data.levels.forEach((lvl,i)=>{
+            let div = document.createElement('div');
+            div.textContent = lvl.height || (i+1)*100;
+            div.dataset.level = i;
+            div.addEventListener('click', ()=>{hlsInstance.currentLevel=parseInt(div.dataset.level);qualityList.style.display='none';});
+            qualityList.appendChild(div);
+          });
+        }
+      });
+    }else{video.src=streamURL;}
+    video.play();
+    history.pushState({playing:true},"");
+  });
+});
+
+// زر HD
+qualityBtn.addEventListener('click', ()=>{qualityList.style.display=qualityList.style.display==='block'?'none':'block';});
+
+// مشغل YouTube
+const ytCards = document.querySelectorAll("#A11 .card");
+const youtubePlayer = document.getElementById("youtubePlayer");
+const youtubeFrame = document.getElementById("youtubeFrame");
+const ytPoster = document.getElementById("ytPoster");
+function getYouTubeId(url){const regex=/(?:youtube\.com\/(?:.*v=|live\/)|youtu\.be\/)([^&?/]+)/;const match=url.match(regex);return match?match[1]:null;}
+ytCards.forEach(card=>{
+  const ytId = getYouTubeId(card.dataset.stream);
+  const title = card.dataset.title || "Video";
+  const img = ytId ? `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg` : '';
+  card.innerHTML = `<img src="${img}"><div class="card-title">${title}</div>`;
+});
+ytCards.forEach(card=>{
+  card.addEventListener('click', ()=>{
+    const ytId = getYouTubeId(card.dataset.stream);
+    if(!ytId) return;
+    ytPoster.src = `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg`;
+    ytPoster.style.display='block';
+    sections.forEach(s=>s.style.display='none');
+    home.style.display='none';
+    youtubePlayer.style.display='block';
+    youtubeFrame.src=`https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1&iv_load_policy=3&playsinline=1`;
+    youtubeFrame.onload=()=>{ytPoster.style.display='none';};
+    history.pushState({playing:true},"");
+  });
+});
+
+// زر الرجوع
+window.onpopstate=()=>{
+  if(playerPage.style.display==='block'){
+    playerPage.style.display='none';
+    video.pause();video.src="";
+    qualityList.style.display='none';qualityList.innerHTML='';
+    if(hlsInstance){hlsInstance.destroy();hlsInstance=null;}
+  }
+  if(youtubePlayer.style.display==='block'){
+    youtubePlayer.style.display='none';
+    youtubeFrame.src="";
+    ytPoster.style.display='none';
+    home.style.display='block';
+  }
+  sections.forEach(s=>s.style.display='none');
+  home.style.display='block';
+};
+</script>
+</body>
+</html>
