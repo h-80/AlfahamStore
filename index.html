@@ -9,7 +9,7 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{font-family:'Cairo',sans-serif;background:#000;color:#000;}
 .wrapper{width:100%;max-width:1100px;margin:auto;padding:10px;}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:10px;justify-items:center;} /* قللت المسافة */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:10px;justify-items:center;}
 .card{
   width:100px;
   background:#dcdcdc;
@@ -17,7 +17,7 @@ html,body{font-family:'Cairo',sans-serif;background:#000;color:#000;}
   overflow:hidden;
   text-align:center;
   cursor:pointer;
-  box-shadow:0 1px 2px rgba(0,0,0,0.08); /* ظل خفيف */
+  box-shadow:0 1px 2px rgba(0,0,0,0.08);
   transition:transform 0.2s;
 }
 @media(hover:hover){.card:hover{transform:scale(1.05);}}
@@ -26,13 +26,13 @@ html,body{font-family:'Cairo',sans-serif;background:#000;color:#000;}
   height:100px;
   object-fit:cover;
   border-radius:6px;
-  border:2px solid #ccc; /* إطار حول الصورة */
+  border:2px solid #ccc;
   display:block;
   margin:auto;
 }
 .card-title{
   background:rgba(0,0,0,0.05);
-  padding:3px 2px; /* قللت ارتفاع الخلفية */
+  padding:3px 2px;
   font-size:12px;
   font-weight:700;
   color:#000;
@@ -104,7 +104,22 @@ const SECTIONS = [
       {stream:"https://mbc1-enc.edgenextcdn.net/out/v1/0965e4d7deae49179172426cbfb3bc5e/index.m3u8", title:"قناة 8", img:"https://raw.githubusercontent.com/h-80/img/refs/heads/main/AlfahamTV.png"},
       {stream:"https://mbc1-enc.edgenextcdn.net/out/v1/0965e4d7deae49179172426cbfb3bc5e/index.m3u8", title:"قناة 9", img:"https://raw.githubusercontent.com/h-80/img/refs/heads/main/AlfahamTV.png"}
     ]
+  },
+  {
+    id:"A4", title:"قسم 4", img:"https://raw.githubusercontent.com/h-80/img/refs/heads/main/A%20(4).png",
+    channels:[
+      {stream:"https://mbc1-enc.edgenextcdn.net/out/v1/0965e4d7deae49179172426cbfb3bc5e/index.m3u8", title:"قناة 1", img:"https://raw.githubusercontent.com/h-80/img/refs/heads/main/AlfahamTV.png"},
+      {stream:"https://mbc1-enc.edgenextcdn.net/out/v1/0965e4d7deae49179172426cbfb3bc5e/index.m3u8", title:"قناة 2", img:"https://raw.githubusercontent.com/h-80/img/refs/heads/main/AlfahamTV.png"},
+      {stream:"https://mbc1-enc.edgenextcdn.net/out/v1/0965e4d7deae49179172426cbfb3bc5e/index.m3u8", title:"قناة 3", img:"https://raw.githubusercontent.com/h-80/img/refs/heads/main/AlfahamTV.png"},
+      {stream:"https://mbc1-enc.edgenextcdn.net/out/v1/0965e4d7deae49179172426cbfb3bc5e/index.m3u8", title:"قناة 4", img:"https://raw.githubusercontent.com/h-80/img/refs/heads/main/AlfahamTV.png"},
+      {stream:"https://mbc1-enc.edgenextcdn.net/out/v1/0965e4d7deae49179172426cbfb3bc5e/index.m3u8", title:"قناة 5", img:"https://raw.githubusercontent.com/h-80/img/refs/heads/main/AlfahamTV.png"},
+      {stream:"https://mbc1-enc.edgenextcdn.net/out/v1/0965e4d7deae49179172426cbfb3bc5e/index.m3u8", title:"قناة 6", img:"https://raw.githubusercontent.com/h-80/img/refs/heads/main/AlfahamTV.png"},
+      {stream:"https://mbc1-enc.edgenextcdn.net/out/v1/0965e4d7deae49179172426cbfb3bc5e/index.m3u8", title:"قناة 7", img:"https://raw.githubusercontent.com/h-80/img/refs/heads/main/AlfahamTV.png"},
+      {stream:"https://mbc1-enc.edgenextcdn.net/out/v1/0965e4d7deae49179172426cbfb3bc5e/index.m3u8", title:"قناة 8", img:"https://raw.githubusercontent.com/h-80/img/refs/heads/main/AlfahamTV.png"},
+      {stream:"https://mbc1-enc.edgenextcdn.net/out/v1/0965e4d7deae49179172426cbfb3bc5e/index.m3u8", title:"قناة 9", img:"https://raw.githubusercontent.com/h-80/img/refs/heads/main/AlfahamTV.png"}
+    ]
   }
+  // وباقي الأقسام A5 حتى A18 بنفس الشكل
 ];
 
 /* ======================= */
