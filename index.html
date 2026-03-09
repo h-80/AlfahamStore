@@ -1,297 +1,530 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>الأقسام والقنوات</title>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700&display=swap');
-*{box-sizing:border-box;margin:0;padding:0;}
-html,body{font-family:'Cairo',sans-serif;background:#000;color:#fff;height:100%;}
-.wrapper{width:100%;max-width:1100px;margin:auto;padding:10px;}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:10px;justify-items:center;}
-.card{width:100px;background:#dcdcdc;border-radius:8px;overflow:hidden;text-align:center;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,0.08);transition:transform 0.2s;}
-@media(hover:hover){.card:hover{transform:scale(1.05);}}
-.card img{width:100px;height:100px;object-fit:cover;border-radius:6px;border:2px solid #ccc;display:block;margin:auto;}
-.card-title{background:rgba(0,0,0,0.05);padding:3px 2px;font-size:12px;font-weight:700;color:#000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;}
-.section{display:none;}
-#playerPage{position:fixed;inset:0;background:#000;display:none;z-index:9999;}
-#video{width:100%;height:100%;background:#000;}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>مشغل القنوات</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* التصميم كما هو دون أي تغيير */
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{background:black;font-family:'Cairo',sans-serif;color:white;height:100vh;display:flex;overflow:hidden;}
+        
+        .player-container{
+            width: 85%;
+            height: 100vh;
+            background:black;
+            position:relative;
+            flex-shrink:0;
+            order: 2;
+        }
+        
+        video{
+            width:100%;
+            height:100%;
+            background:black;
+            outline:none;
+        }
+        
+        .channels-container{
+            background:#1a1a1a;
+            width: 15%;
+            height: 100vh;
+            padding:6px;
+            overflow-y:auto;
+            order: 1;
+        }
+        
+        .channels-grid{
+            display:flex;
+            flex-direction:column;
+            gap:3px;
+        }
+        
+        .channel-card{
+            background:#2a2a2a;
+            border-radius:4px;
+            padding:4px 8px;
+            cursor:pointer;
+            border:1px solid #3a3a3a;
+            color:white;
+            font-size:13px;
+            text-align:right;
+            display:flex;
+            align-items:center;
+            gap:6px;
+            line-height:1.3;
+            min-height:32px;
+        }
+        
+        .channel-number{
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            background:#444;
+            color:#fff;
+            font-size:11px;
+            font-weight:600;
+            width:20px;
+            height:20px;
+            border-radius:3px;
+            flex-shrink:0;
+        }
+        
+        .channel-card:hover{
+            background:#3a3a3a;
+        }
+        
+        .channel-card:hover .channel-number{
+            background:#555;
+        }
+        
+        .channel-card.active{
+            border-right:3px solid white;
+            background:#3a3a3a;
+        }
+        
+        .channel-card.active .channel-number{
+            background:#e74c3c;
+            color:white;
+        }
+
+        .channel-name{
+            flex:1;
+            white-space:nowrap;
+            overflow:hidden;
+            text-overflow:ellipsis;
+        }
+
+        .quality-hq-btn {
+            position: absolute;
+            bottom: 60px;
+            right: 10px;
+            background: rgba(30, 30, 30, 0.4);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 4px;
+            padding: 4px 10px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            z-index: 999;
+            display: none;
+            opacity: 0.7;
+            -webkit-tap-highlight-color: transparent;
+            backdrop-filter: blur(1px);
+            transition: opacity 0.2s;
+        }
+        
+        .quality-dropdown {
+            position: absolute;
+            bottom: 60px;
+            right: 45px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 4px;
+            min-width: 70px;
+            max-height: 140px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            scrollbar-width: thin;
+        }
+        
+        .quality-dropdown.show {
+            display: block;
+        }
+        
+        .quality-dropdown::-webkit-scrollbar {
+            width: 3px;
+        }
+        
+        .quality-dropdown::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+        
+        .quality-dropdown::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 3px;
+        }
+        
+        .quality-item {
+            padding: 6px 10px;
+            color: #eee;
+            font-size: 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #2a2a2a;
+            text-align: center;
+        }
+        
+        .quality-item:last-child {
+            border-bottom: none;
+        }
+        
+        .quality-item:hover {
+            background: #333;
+        }
+        
+        .quality-item.active {
+            background: #444;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .quality-item.auto-option {
+            background: #222;
+            color: #aaa;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            .player-container {
+                width: 100%;
+                height: 65vh;
+                order: 2;
+            }
+            .channels-container {
+                width: 100%;
+                height: 35vh;
+                order: 1;
+            }
+            .channel-card {
+                padding: 6px 10px;
+                font-size: 14px;
+            }
+        }
+    </style>
 </head>
 <body>
+    <div class="player-container" id="playerContainer">
+        <video id="video" playsinline controls crossorigin="anonymous"></video>
+        <button class="quality-hq-btn" id="qualityHqBtn">HQ</button>
+        <div class="quality-dropdown" id="qualityDropdown">
+            <div class="quality-item auto-option" data-level="-1">تلقائي</div>
+        </div>
+    </div>
+    <div class="channels-container">
+        <div class="channels-grid" id="channelsList"></div>
+    </div>
 
-<div class="wrapper" id="home">
-  <div class="grid" id="sectionsGrid"></div>
-</div>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script>
+        // جميع القنوات (نفس الكود)
+        const channelsText = `
+كربلاء|https://h1001.hibridcdn.net/karbala/karbalatv_w82qc0GT1o2qt9wVgjkX7YDJP8Hz7UXN/karbala/karbalatv_240p/chunks.m3u8
+القران الكريم|https://ktvlive.online/stream/hls/ch1.m3u8
+كربلاء الوثائقية|https://ktvlive.online/stream/hls/ch3.m3u8
+العراقية|https://cdn.catiacast.video/abr/78054972db7708422595bc96c6e024ac/playlist.m3u8
+العراقية الأخبارية|https://cdn.catiacast.video/abr/78054972db7708422595bc96c6e024ac/playlist.m3u8
+الشرقية|https://indexforce.com/home/mystream/chunklist_w887163316.m3u8
+االشرقية نيوز|https://indexforce.com/alsharqiyalive/mystream/chunklist_w132270014.m3u8
+االأولى العراقية 1|https://live.alawla.tv/hls/stream.m3u8
+عراق الحدث|https://ktvlive.online/stream/hls/ch1.m3u8
+الدولة|https://ffs3.gulfsat.com/aldawlatv/index.m3u8
+دجلة|https://ghaasiflu.online/Dijlah/index.m3u8
+الفلوجة|https://ktvlive.online/stream/hls/ch1.m3u8
+التغير|https://jmc-live.ercdn.net/altaghier/altaghier.m3u8
+I NEWS|https://live.i-news.tv/hls/2/stream.m3u8
+U tv|https://mn-nl.mncdn.com/utviraqi2/64c80359/index.m3u8
+الفرات|https://ktvlive.online/stream/hls/ch1.m3u8
+النعيم|https://ktvlive.online/stream/hls/ch1.m3u8
+زاكروس|https://ktvlive.online/stream/hls/ch1.m3u8
+أفاق|https://s1.ettehadlive.com/live/1/playlist.m3u8
+العهد|https://ktvlive.online/stream/hls/ch1.m3u8
+الأيام|https://ktvlive.online/stream/hls/ch1.m3u8
+المسرى|https://live.bradosti.net/live/Almasra_playlist.m3u8
+الولاية|https://nl.livekadeh.com/hls2/alwilayah_tv.m3u8
+سامراء|https://live.bradosti.net/live/AlSamara/index.m3u8
+الرشيد|https://media1.livaat.com/static/AL-RASHEED-HD/playlist.m3u8
+الجوادين|https://live.aljawadain.org/live/aljawadaintv/playlist.m3u8
+أمام حسين|https://live.imamhossaintv.com/live/ih2.m3u8
+أبا الفضل|https://t.northtelecom.org/ABALFADHLTV.m3u8
+شمس|https://stream.shams.tv/hls/stream.m3u8
+القران الكريم|https://ktvlive.online/stream/hls/ch1.m3u8
+        `;
 
-<div id="playerPage">
-  <video id="video" controls autoplay playsinline></video>
-</div>
+        const video = document.getElementById('video');
+        const list = document.getElementById('channelsList');
+        const qualityBtn = document.getElementById('qualityHqBtn');
+        const qualityDropdown = document.getElementById('qualityDropdown');
+        const playerContainer = document.getElementById('playerContainer');
+        
+        let hls = null;
+        let currentLevel = -1;
+        let timeoutId = null;
+        let buttonVisible = false;
 
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-<script>
-// =====================
-// الأقسام والقنوات مكتوبة بالكامل
-const SECTIONS = [
-{ id:"A1", title:"قسم 1", img:"https://via.placeholder.com/100?text=A1", channels:[
-  {title:"قناة 1", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q1"},
-  {title:"قناة 2", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q2"},
-  {title:"قناة 3", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q3"},
-  {title:"قناة 4", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q4"},
-  {title:"قناة 5", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q5"},
-  {title:"قناة 6", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q6"},
-  {title:"قناة 7", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q7"},
-  {title:"قناة 8", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q8"},
-  {title:"قناة 9", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q9"}
-]},
-{ id:"A2", title:"قسم 2", img:"https://via.placeholder.com/100?text=A2", channels:[
-  {title:"قناة 1", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q1"},
-  {title:"قناة 2", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q2"},
-  {title:"قناة 3", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q3"},
-  {title:"قناة 4", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q4"},
-  {title:"قناة 5", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q5"},
-  {title:"قناة 6", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q6"},
-  {title:"قناة 7", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q7"},
-  {title:"قناة 8", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q8"},
-  {title:"قناة 9", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q9"}
-]},
-{ id:"A3", title:"قسم 3", img:"https://via.placeholder.com/100?text=A3", channels:[
-  {title:"قناة 1", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q1"},
-  {title:"قناة 2", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q2"},
-  {title:"قناة 3", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q3"},
-  {title:"قناة 4", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q4"},
-  {title:"قناة 5", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q5"},
-  {title:"قناة 6", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q6"},
-  {title:"قناة 7", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q7"},
-  {title:"قناة 8", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q8"},
-  {title:"قناة 9", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q9"}
-]},
-{ id:"A4", title:"قسم 4", img:"https://via.placeholder.com/100?text=A4", channels:[
-  {title:"قناة 1", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q1"},
-  {title:"قناة 2", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q2"},
-  {title:"قناة 3", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q3"},
-  {title:"قناة 4", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q4"},
-  {title:"قناة 5", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q5"},
-  {title:"قناة 6", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q6"},
-  {title:"قناة 7", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q7"},
-  {title:"قناة 8", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q8"},
-  {title:"قناة 9", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q9"}
-]},
-{ id:"A5", title:"قسم 5", img:"https://via.placeholder.com/100?text=A5", channels:[
-  {title:"قناة 1", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q1"},
-  {title:"قناة 2", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q2"},
-  {title:"قناة 3", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q3"},
-  {title:"قناة 4", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q4"},
-  {title:"قناة 5", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q5"},
-  {title:"قناة 6", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q6"},
-  {title:"قناة 7", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q7"},
-  {title:"قناة 8", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q8"},
-  {title:"قناة 9", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q9"}
-]},
-{ id:"A6", title:"قسم 6", img:"https://via.placeholder.com/100?text=A6", channels:[
-  {title:"قناة 1", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q1"},
-  {title:"قناة 2", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q2"},
-  {title:"قناة 3", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q3"},
-  {title:"قناة 4", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q4"},
-  {title:"قناة 5", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q5"},
-  {title:"قناة 6", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q6"},
-  {title:"قناة 7", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q7"},
-  {title:"قناة 8", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q8"},
-  {title:"قناة 9", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q9"}
-]},
-{ id:"A7", title:"قسم 7", img:"https://via.placeholder.com/100?text=A7", channels:[
-  {title:"قناة 1", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q1"},
-  {title:"قناة 2", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q2"},
-  {title:"قناة 3", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q3"},
-  {title:"قناة 4", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q4"},
-  {title:"قناة 5", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q5"},
-  {title:"قناة 6", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q6"},
-  {title:"قناة 7", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q7"},
-  {title:"قناة 8", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q8"},
-  {title:"قناة 9", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q9"}
-]},
-{ id:"A8", title:"قسم 8", img:"https://via.placeholder.com/100?text=A8", channels:[
-  {title:"قناة 1", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q1"},
-  {title:"قناة 2", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q2"},
-  {title:"قناة 3", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q3"},
-  {title:"قناة 4", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q4"},
-  {title:"قناة 5", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q5"},
-  {title:"قناة 6", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q6"},
-  {title:"قناة 7", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q7"},
-  {title:"قناة 8", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q8"},
-  {title:"قناة 9", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q9"}
-]},
-{ id:"A9", title:"قسم 9", img:"https://via.placeholder.com/100?text=A9", channels:[
-  {title:"قناة 1", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q1"},
-  {title:"قناة 2", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q2"},
-  {title:"قناة 3", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q3"},
-  {title:"قناة 4", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q4"},
-  {title:"قناة 5", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q5"},
-  {title:"قناة 6", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q6"},
-  {title:"قناة 7", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q7"},
-  {title:"قناة 8", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q8"},
-  {title:"قناة 9", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q9"}
-]},
-{ id:"A10", title:"قسم 10", img:"https://via.placeholder.com/100?text=A10", channels:[
-  {title:"قناة 1", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q1"},
-  {title:"قناة 2", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q2"},
-  {title:"قناة 3", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q3"},
-  {title:"قناة 4", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q4"},
-  {title:"قناة 5", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q5"},
-  {title:"قناة 6", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q6"},
-  {title:"قناة 7", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q7"},
-  {title:"قناة 8", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q8"},
-  {title:"قناة 9", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q9"}
-]},
-// أقسام A11 إلى A18 بنفس النمط:
-{ id:"A11", title:"قسم 11", img:"https://via.placeholder.com/100?text=A11", channels:[
-  {title:"قناة 1", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q1"},
-  {title:"قناة 2", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q2"},
-  {title:"قناة 3", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q3"},
-  {title:"قناة 4", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q4"},
-  {title:"قناة 5", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q5"},
-  {title:"قناة 6", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q6"},
-  {title:"قناة 7", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q7"},
-  {title:"قناة 8", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q8"},
-  {title:"قناة 9", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q9"}
-]},
-{ id:"A12", title:"قسم 12", img:"https://via.placeholder.com/100?text=A12", channels:[
-  {title:"قناة 1", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q1"},
-  {title:"قناة 2", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q2"},
-  {title:"قناة 3", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q3"},
-  {title:"قناة 4", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q4"},
-  {title:"قناة 5", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q5"},
-  {title:"قناة 6", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q6"},
-  {title:"قناة 7", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q7"},
-  {title:"قناة 8", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q8"},
-  {title:"قناة 9", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q9"}
-]},
-{ id:"A13", title:"قسم 13", img:"https://via.placeholder.com/100?text=A13", channels:[
-  {title:"قناة 1", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q1"},
-  {title:"قناة 2", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q2"},
-  {title:"قناة 3", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q3"},
-  {title:"قناة 4", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q4"},
-  {title:"قناة 5", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q5"},
-  {title:"قناة 6", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q6"},
-  {title:"قناة 7", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q7"},
-  {title:"قناة 8", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q8"},
-  {title:"قناة 9", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q9"}
-]},
-{ id:"A14", title:"قسم 14", img:"https://via.placeholder.com/100?text=A14", channels:[
-  {title:"قناة 1", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q1"},
-  {title:"قناة 2", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q2"},
-  {title:"قناة 3", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q3"},
-  {title:"قناة 4", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q4"},
-  {title:"قناة 5", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q5"},
-  {title:"قناة 6", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q6"},
-  {title:"قناة 7", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q7"},
-  {title:"قناة 8", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q8"},
-  {title:"قناة 9", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q9"}
-]},
-{ id:"A15", title:"قسم 15", img:"https://via.placeholder.com/100?text=A15", channels:[
-  {title:"قناة 1", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q1"},
-  {title:"قناة 2", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q2"},
-  {title:"قناة 3", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q3"},
-  {title:"قناة 4", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q4"},
-  {title:"قناة 5", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q5"},
-  {title:"قناة 6", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q6"},
-  {title:"قناة 7", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q7"},
-  {title:"قناة 8", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q8"},
-  {title:"قناة 9", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q9"}
-]},
-{ id:"A16", title:"قسم 16", img:"https://via.placeholder.com/100?text=A16", channels:[
-  {title:"قناة 1", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q1"},
-  {title:"قناة 2", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q2"},
-  {title:"قناة 3", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q3"},
-  {title:"قناة 4", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q4"},
-  {title:"قناة 5", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q5"},
-  {title:"قناة 6", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q6"},
-  {title:"قناة 7", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q7"},
-  {title:"قناة 8", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q8"},
-  {title:"قناة 9", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q9"}
-]},
-{ id:"A17", title:"قسم 17", img:"https://via.placeholder.com/100?text=A17", channels:[
-  {title:"قناة 1", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q1"},
-  {title:"قناة 2", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q2"},
-  {title:"قناة 3", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q3"},
-  {title:"قناة 4", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q4"},
-  {title:"قناة 5", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q5"},
-  {title:"قناة 6", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q6"},
-  {title:"قناة 7", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q7"},
-  {title:"قناة 8", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q8"},
-  {title:"قناة 9", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q9"}
-]},
-{ id:"A18", title:"قسم 18", img:"https://via.placeholder.com/100?text=A18", channels:[
-  {title:"قناة 1", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q1"},
-  {title:"قناة 2", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q2"},
-  {title:"قناة 3", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q3"},
-  {title:"قناة 4", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q4"},
-  {title:"قناة 5", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q5"},
-  {title:"قناة 6", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q6"},
-  {title:"قناة 7", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q7"},
-  {title:"قناة 8", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q8"},
-  {title:"قناة 9", stream:"https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", img:"https://via.placeholder.com/100?text=Q9"}
-]}
-];
+        // *** التعديلات هنا: إضافة عدة Proxies كبدائل ***
+        const corsProxies = [
+            'https://cors-anywhere.herokuapp.com/',
+            'https://api.allorigins.win/raw?url=', // بديل جيد
+            'https://proxy.cors.sh/' 
+        ];
+        
+        // دالة لتجربة الوكيل المناسب لكل رابط
+        function getProxyUrl(url) {
+            // إذا كان الرابط من المواقع التي نعرف أنها تحتاج وكيل
+            if (url.includes('catiacast.video') || url.includes('hibridcdn.net')) {
+                // نستخدم أول وكيل في القائمة
+                return corsProxies[0] + encodeURIComponent(url);
+            }
+            // للروابط الأخرى، نعيد الرابط الأصلي لنجرب مباشرة أولاً
+            return url;
+        }
 
-// =====================
-// إنشاء واجهة الأقسام
-const sectionsGrid = document.getElementById('sectionsGrid');
-SECTIONS.forEach(sec=>{
-  let div = document.createElement('div');
-  div.className='card';
-  div.innerHTML=`<img src="${sec.img}" alt="${sec.title}"><div class="card-title">${sec.title}</div>`;
-  div.onclick=()=>showSection(sec.id);
-  sectionsGrid.appendChild(div);
-});
+        // دالة عرض الزر (كما هي)
+        function showButton() {
+            if (qualityBtn.style.display === 'block') {
+                qualityBtn.style.opacity = '0.7';
+                qualityBtn.style.display = 'block';
+                buttonVisible = true;
+                
+                if (timeoutId) clearTimeout(timeoutId);
+                timeoutId = setTimeout(() => {
+                    if (!qualityDropdown.classList.contains('show') && buttonVisible) {
+                        qualityBtn.style.opacity = '0';
+                        setTimeout(() => {
+                            if (!qualityDropdown.classList.contains('show')) {
+                                qualityBtn.style.display = 'none';
+                                buttonVisible = false;
+                            }
+                        }, 200);
+                    }
+                }, 3000);
+            }
+        }
 
-// =====================
-// عرض قسم القنوات
-let lastSectionId=null;
-function showSection(id){
-  lastSectionId=id;
-  const section=SECTIONS.find(s=>s.id===id);
-  sectionsGrid.innerHTML='';
-  section.channels.forEach(ch=>{
-    let div=document.createElement('div');
-    div.className='card';
-    div.innerHTML=`<img src="${ch.img}" alt="${ch.title}"><div class="card-title">${ch.title}</div>`;
-    div.onclick=()=>playChannel(ch.stream);
-    sectionsGrid.appendChild(div);
-  });
-}
+        playerContainer.addEventListener('touchstart', (e) => {
+            if (!qualityBtn.contains(e.target) && !qualityDropdown.contains(e.target)) {
+                if (qualityBtn.style.display === 'block') {
+                    showButton();
+                } else {
+                    qualityBtn.style.display = 'block';
+                    qualityBtn.style.opacity = '0.7';
+                    buttonVisible = true;
+                    showButton();
+                }
+            }
+        });
 
-// =====================
-// تشغيل القناة
-const playerPage=document.getElementById('playerPage');
-const video=document.getElementById('video');
-let hls=null;
-function playChannel(url){
-  playerPage.style.display='block';
-  if(Hls.isSupported()){
-    if(hls){hls.destroy();}
-    hls=new Hls();
-    hls.loadSource(url);
-    hls.attachMedia(video);
-    hls.on(Hls.Events.MANIFEST_PARSED,()=>{video.play();});
-  }else{video.src=url; video.play();}
-}
+        playerContainer.addEventListener('mousemove', showButton);
 
-// =====================
-// الرجوع من الفيديو للقسم السابق
-playerPage.onclick=()=>{
-  playerPage.style.display='none';
-  video.pause();
-  showSection(lastSectionId);
-}
+        qualityBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            qualityDropdown.classList.toggle('show');
+            if (timeoutId) clearTimeout(timeoutId);
+        });
 
-// =====================
-// الرجوع للماضي تلقائياً من الجهاز
-window.onpopstate=()=>{
-  if(playerPage.style.display==='block'){playerPage.style.display='none'; video.pause(); showSection(lastSectionId);}
-}
-</script>
+        qualityBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            qualityDropdown.classList.toggle('show');
+            if (timeoutId) clearTimeout(timeoutId);
+        });
 
+        document.addEventListener('touchstart', (e) => {
+            if (!qualityBtn.contains(e.target) && !qualityDropdown.contains(e.target)) {
+                qualityDropdown.classList.remove('show');
+                if (buttonVisible) {
+                    if (timeoutId) clearTimeout(timeoutId);
+                    timeoutId = setTimeout(() => {
+                        qualityBtn.style.opacity = '0';
+                        setTimeout(() => {
+                            qualityBtn.style.display = 'none';
+                            buttonVisible = false;
+                        }, 200);
+                    }, 3000);
+                }
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!qualityBtn.contains(e.target) && !qualityDropdown.contains(e.target)) {
+                qualityDropdown.classList.remove('show');
+            }
+        });
+
+        // *** دالة playChannel المعدلة بشكل كبير ***
+        function playChannel(url) {
+            if (hls) { hls.destroy(); hls = null; }
+            
+            video.pause();
+            video.removeAttribute('src');
+            video.load();
+
+            // تطبيق الوكيل إذا لزم الأمر
+            let finalUrl = getProxyUrl(url);
+            console.log('محاولة تشغيل الرابط:', finalUrl);
+
+            // محاولة التشغيل باستخدام HLS.js
+            if (Hls.isSupported()) {
+                try {
+                    hls = new Hls({
+                        maxBufferLength: 30,
+                        maxBufferSize: 50 * 1000 * 1000,
+                        startLevel: -1,
+                        // *** إعدادات xhrSetup محسنة ***
+                        xhrSetup: function(xhr, url) {
+                            xhr.withCredentials = false; // مهم جداً: لا ترسل كوكيز
+                            // محاكاة متصفح حديث بشكل كامل
+                            xhr.setRequestHeader('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
+                            xhr.setRequestHeader('Accept', '*/*');
+                            xhr.setRequestHeader('Accept-Language', 'en-US,en;q=0.9,ar;q=0.8');
+                            xhr.setRequestHeader('Referer', 'https://www.google.com/'); // بعض الخوادم تنتظر ريفيرر
+                            xhr.setRequestHeader('Origin', 'https://www.google.com');
+                            // يمكن إضافة رأس "sec-fetch-site" إذا لزم الأمر، لكنه قد يسبب مشاكل.
+                        }
+                    });
+                    
+                    hls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
+                        console.log('تم تحميل القائمة بنجاح، عدد الجودات:', data.levels.length);
+                        updateQualityMenu(hls.levels);
+                        video.play().catch(e => console.log('تعذر التشغيل التلقائي:', e));
+                    });
+
+                    hls.on(Hls.Events.ERROR, (event, data) => {
+                        console.warn('خطأ HLS:', data.type, data.details, data.fatal);
+                        if (data.fatal) {
+                            switch(data.type) {
+                                case Hls.ErrorTypes.NETWORK_ERROR:
+                                    console.log('خطأ شبكة، محاولة إعادة الاتصال...');
+                                    hls.startLoad();
+                                    break;
+                                case Hls.ErrorTypes.MEDIA_ERROR:
+                                    console.log('خطأ وسائط، محاولة الاسترداد...');
+                                    hls.recoverMediaError();
+                                    break;
+                                default:
+                                    // إذا فشل كل شيء، ندمر hls ونجرب الرابط مباشرة في video tag
+                                    console.log('خطأ فادح غير متوقع، تجربة التشغيل المباشر...');
+                                    hls.destroy();
+                                    hls = null;
+                                    video.src = finalUrl; // نجرب الرابط الأصلي أو مع الوكيل
+                                    video.play().catch(err => {
+                                        console.error('فشل التشغيل المباشر أيضاً:', err);
+                                        alert('تعذر تشغيل هذه القناة');
+                                    });
+                                    break;
+                            }
+                        }
+                    });
+
+                    hls.loadSource(finalUrl);
+                    hls.attachMedia(video);
+                } catch (e) {
+                    console.error('خطأ في إنشاء Hls:', e);
+                    // الرجوع إلى الطريقة التقليدية
+                    video.src = finalUrl;
+                    video.play().catch(err => console.error('فشل التشغيل التقليدي:', err));
+                }
+            } else {
+                // المتصفح لا يدعم HLS.js (نادر)
+                video.src = finalUrl;
+                video.play().catch(() => {});
+                updateQualityMenu([]);
+            }
+        }
+
+        // دالة تحديث قائمة الجودات (كما هي)
+        function updateQualityMenu(levels) {
+            while (qualityDropdown.children.length > 1) {
+                qualityDropdown.removeChild(qualityDropdown.lastChild);
+            }
+            
+            if (!levels || levels.length === 0) { 
+                qualityBtn.style.display = 'none'; 
+                buttonVisible = false;
+                return; 
+            }
+            
+            qualityBtn.style.display = 'block';
+            qualityBtn.style.opacity = '0.7';
+            buttonVisible = true;
+            
+            const sortedLevels = [...levels].sort((a, b) => (b.height || 0) - (a.height || 0));
+            
+            sortedLevels.forEach((level) => {
+                if (!level.height) return;
+                const item = document.createElement('div');
+                item.className = 'quality-item';
+                item.textContent = `${level.height}p`;
+                item.dataset.level = levels.indexOf(level);
+                
+                item.onclick = (e) => {
+                    e.stopPropagation();
+                    if (hls) {
+                        currentLevel = parseInt(item.dataset.level);
+                        hls.currentLevel = currentLevel;
+                        document.querySelectorAll('.quality-item').forEach(el => el.classList.remove('active'));
+                        item.classList.add('active');
+                    }
+                    qualityDropdown.classList.remove('show');
+                    
+                    if (timeoutId) clearTimeout(timeoutId);
+                    timeoutId = setTimeout(() => {
+                        qualityBtn.style.opacity = '0';
+                        setTimeout(() => {
+                            qualityBtn.style.display = 'none';
+                            buttonVisible = false;
+                        }, 200);
+                    }, 3000);
+                };
+                
+                qualityDropdown.appendChild(item);
+            });
+            
+            const autoItem = qualityDropdown.querySelector('.auto-option');
+            autoItem.onclick = (e) => {
+                e.stopPropagation();
+                if (hls) {
+                    currentLevel = -1; 
+                    hls.currentLevel = -1;
+                    document.querySelectorAll('.quality-item').forEach(el => el.classList.remove('active'));
+                    autoItem.classList.add('active');
+                }
+                qualityDropdown.classList.remove('show');
+                
+                if (timeoutId) clearTimeout(timeoutId);
+                timeoutId = setTimeout(() => {
+                    qualityBtn.style.opacity = '0';
+                    setTimeout(() => {
+                        qualityBtn.style.display = 'none';
+                        buttonVisible = false;
+                    }, 200);
+                }, 3000);
+            };
+        }
+
+        // بناء قائمة القنوات (كما هي)
+        const channels = channelsText.trim().split('\n').filter(line => line.includes('|'));
+        
+        channels.forEach((line, index) => {
+            const [name, url] = line.split('|');
+            if (!name || !url) return;
+            
+            const card = document.createElement('div');
+            card.className = 'channel-card';
+            
+            const number = index + 1;
+            
+            card.innerHTML = `
+                <span class="channel-number">${number}</span>
+                <span class="channel-name">${name.trim()}</span>
+            `;
+            
+            card.onclick = () => {
+                document.querySelectorAll('.channel-card').forEach(e => e.classList.remove('active'));
+                card.classList.add('active');
+                playChannel(url.trim());
+            };
+            
+            list.appendChild(card);
+            if (index === 0) setTimeout(() => card.click(), 100);
+        });
+    </script>
 </body>
 </html>
