@@ -8,16 +8,30 @@
     <style>
         *{margin:0;padding:0;box-sizing:border-box;}
         body{background:black;font-family:'Cairo',sans-serif;color:white;height:100vh;display:flex;overflow:hidden;}
+        
         .player-container{width: 85%;height: 100vh;background:black;position:relative;flex-shrink:0;order: 2;}
-        video{width:100%;height:100%;background:black;outline:none;}
+        video, #youtubeIframe{width:100%;height:100%;background:black;outline:none;border:none;}
+        
         .channels-container{background:#1a1a1a;width: 15%;height: 100vh;padding:6px;overflow-y:auto;order: 1;}
         .channels-grid{display:flex;flex-direction:column;gap:3px;}
-        .channel-card{background:#2a2a2a;border-radius:4px;padding:4px 8px;cursor:pointer;border:1px solid #3a3a3a;color:white;font-size:13px;text-align:right;display:flex;align-items:center;gap:6px;line-height:1.3;min-height:32px;}
+        
+        .channel-card{background:#2a2a2a;border-radius:4px;padding:4px 8px;cursor:pointer;border:2px solid transparent;color:white;font-size:13px;text-align:right;display:flex;align-items:center;gap:6px;line-height:1.3;min-height:32px; outline: none;}
+        .channel-card:focus {border: 2px solid #e74c3c; background: #3a3a3a;}
+        
         .channel-number{display:inline-flex;align-items:center;justify-content:center;background:#444;color:#fff;font-size:11px;font-weight:600;width:20px;height:20px;border-radius:3px;flex-shrink:0;}
-        .channel-card:hover{background:#3a3a3a;}
         .channel-card.active{border-right:3px solid white;background:#3a3a3a;}
         .channel-card.active .channel-number{background:#e74c3c;color:white;}
         .channel-name{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+        .quality-hq-btn {position: absolute;bottom: 60px;right: 10px;background: rgba(0,0,0,0.4);color: white;border: 1px solid rgba(255,255,255,0.15);border-radius: 4px;padding: 4px 10px;font-size: 12px;cursor: pointer;z-index: 1000;display: none;transition: opacity 0.3s;}
+        .quality-hq-btn:focus {border: 2px solid #e74c3c;}
+        
+        .quality-dropdown {position: absolute;bottom: 95px;right: 10px;background: rgba(0,0,0,0.9);border: 1px solid #444;border-radius: 4px;display: none;z-index: 1001;min-width: 90px;}
+        .quality-item {padding: 8px 12px;cursor: pointer;font-size: 13px;text-align: right;border-bottom: 1px solid #333;display: flex;align-items: center;gap: 8px; outline: none;}
+        .quality-item:focus {background: #e74c3c; color: white;}
+        .dot {width: 6px;height: 6px;background: #e74c3c;border-radius: 50%;display: none;flex-shrink: 0;}
+        .quality-item.active .dot {display: block;}
+
         @media (max-width: 768px) {
             body {flex-direction: column;}
             .player-container {width: 100%;height: 65vh;order: 2;}
@@ -28,6 +42,8 @@
 <body>
     <div class="player-container" id="playerContainer">
         <video id="video" playsinline controls crossorigin="anonymous"></video>
+        <button class="quality-hq-btn" id="qualityHqBtn">HQ</button>
+        <div class="quality-dropdown" id="qualityDropdown"></div>
     </div>
     <div class="channels-container">
         <div class="channels-grid" id="channelsList"></div>
@@ -35,61 +51,303 @@
 
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script>
-        const channelsData = `كربلاء|https://h1001.hibridcdn.net/karbala/karbalatv_w82qc0GT1o2qt9wVgjkX7YDJP8Hz7UXN/karbala/karbalatv_240p/chunks.m3u8
-القران الكريم|https://ktvlive.online/stream/hls/ch1.m3u8
-كربلاء الوثائقية|https://ktvlive.online/stream/hls/ch3.m3u8
-العراقية|https://cdn.catiacast.video/abr/78054972db7708422595bc96c6e024ac/playlist.m3u8
-العراقية الأخبارية|https://cdn.catiacast.video/abr/78054972db7708422595bc96c6e024ac/playlist.m3u8
-الشرقية|https://indexforce.com/home/mystream/chunklist_w887163316.m3u8
-االشرقية نيوز|https://indexforce.com/alsharqiyalive/mystream/chunklist_w132270014.m3u8
-االأولى العراقية 1|https://live.alawla.tv/hls/stream.m3u8
-عراق الحدث|https://ktvlive.online/stream/hls/ch1.m3u8
-الدولة|https://ffs3.gulfsat.com/aldawlatv/index.m3u8
-دجلة|https://ghaasiflu.online/Dijlah/index.m3u8
-الفلوجة|https://ktvlive.online/stream/hls/ch1.m3u8
-التغير|https://jmc-live.ercdn.net/altaghier/altaghier.m3u8
-I NEWS|https://live.i-news.tv/hls/2/stream.m3u8
-U tv|https://mn-nl.mncdn.com/utviraqi2/64c80359/index.m3u8
-الفرات|https://ktvlive.online/stream/hls/ch1.m3u8
-النعيم|https://ktvlive.online/stream/hls/ch1.m3u8
-زاكروس|https://ktvlive.online/stream/hls/ch1.m3u8
-أفاق|https://s1.ettehadlive.com/live/1/playlist.m3u8
-العهد|https://ktvlive.online/stream/hls/ch1.m3u8
-الأيام|https://ktvlive.online/stream/hls/ch1.m3u8
-المسرى|https://live.bradosti.net/live/Almasra_playlist.m3u8
-الولاية|https://nl.livekadeh.com/hls2/alwilayah_tv.m3u8
-سامراء|https://live.bradosti.net/live/AlSamara/index.m3u8
-الرشيد|https://media1.livaat.com/static/AL-RASHEED-HD/playlist.m3u8
-الجوادين|https://live.aljawadain.org/live/aljawadaintv/playlist.m3u8
-أمام حسين|https://live.imamhossaintv.com/live/ih2.m3u8
-أبا الفضل|https://t.northtelecom.org/ABALFADHLTV.m3u8
-شمس|https://stream.shams.tv/hls/stream.m3u8`;
+        // البيانات كما طلبت (الاسم في سطر، الرابط في سطر)
+        const rawChannels = `
+MBC 1
+https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-1-na/eec141533c90dd34722c503a296dd0d8/index.m3u8
+MBC 1 USA
+https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-1-usa/fdac3a4fc0473f1f56e07ec1d63a4b7b/index.m3u8
+MBC 2
+https://ev-fuj-dxb-cdn-edge2.aws.playco.com/live/eds/MBC_2HD/DASH/MBC_2HD.mpd
+MBC 3
+https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-3-usa/5d58265a862a476dc7f97694addb5ded/index.m3u8
+MBC 4
+https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-4/24f134f1cd63db9346439e96b86ca6ed/index.m3u8
+MBC 5
+https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-5/ee6b000cee0629411b666ab26cb13e9b/index.m3u8
+MBC IRAQ
+https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-iraq/e38c44b1b43474e1c39cb5b90203691e/index.m3u8
+MBC Drama
+https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-drama/2c28a458e2f3253e678b07ac7d13fe71/index.m3u8
+MBC Drama USA
+https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-drama-usa/ea2f5db904aff224b7066e59c7f585a2/index.m3u8
+MBC Drama Plus
+https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-plus-drama/e37251ec2aac8f6c98f75cd0fa37cd28/index.m3u8
+MBC Masr
+https://shls-masr-ak.akamaized.net/out/v1/d5036cabf11e45bf9d0db410ca135c18/index.m3u8
+MBC Masr USA
+https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-masr-usa/cd8d40acdab28aac0582faa3bd3983f1/index.m3u8
+MBC Masr 2
+https://shd-gcp-live.akamaized.net/live/bitmovin-mbc-masr-2/754931856515075b0aabf0e583495c68/index.m3u8
+MBC Masr Drama
+https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-masr-drama/567b703c19ede6598222de81b0e4508b/index.m3u8
+MBC Action
+https://m3u.iranvids.com/mbc-action/output.m3u8
+MBC MAX
+https://freechannelsonly.xyz/live/u7JewhWwuWkS/BRBRyWDNUEr6/21.m3u8
+MBC Bollywood
+https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-bollywood/546eb40d7dcf9a209255dd2496903764/index.m3u8
+MBC Persia
+https://mbc1-enc.edgenextcdn.net/out/v1/0965e4d7deae49179172426cbfb3bc5e/index.m3u8
+MBC GAMING
+https://halalondon-live.ercdn.net/halalondon/halalondon.m3u8
+MBC PLUS ELIFE
+https://mbc1-enc.edgenextcdn.net/out/v1/0965e4d7deae49179172426cbfb3bc5e/index.m3u8
+MBC Variety +
+https://mbc1-enc.edgenextcdn.net/out/v1/0965e4d7deae49179172426cbfb3bc5e/index.m3u8
+MBC FM
+https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-fm/3f36f7db6086acf058dc51681c87f8ad/index.m3u8
+MBC Wanasah
+https://mbc1-enc.edgenextcdn.net/out/v1/0965e4d7deae49179172426cbfb3bc5e/index.m3u8
+Mix One
+https://ml-pull-hwc.myco.io/MixONE/hls/index.m3u8
+Mix BelAraby
+https://ml-pull-hwc.myco.io/MixBelAraby/hls/index.m3u8
+MIX TV
+https://ml-pull-hwc.myco.io/MixTV/hls/index.m3u8
+شاهد أفلام الأكشن
+https://shls-live-enc.edgenextcdn.net/out/v1/f6d718e841f8442f8374de47f18c93a7/index.m3u8?aws.manifestfilter=video_height:144-720;video_codec:H264&video_height=144-720&video_codec=H264
+شاهد أفلام الإثارة
+https://mbc1-enc.edgenextcdn.net/out/v1/46079e838e65490c8299f902a7731168/index.m3u8
+شاهد أفلام
+https://mbc1-enc.edgenextcdn.net/out/v1/0044dd4b001a466c941ad77b04a574a2/index.m3u8
+شاهد باب الحارة
+https://mbc1-enc.edgenextcdn.net/out/v1/948c54279b594944adde578c95f1d7d1/index.m3u8
+شاهد العاصوف
+https://mbc1-enc.edgenextcdn.net/out/v1/0afd546fcb5342f69d6bfff2dd1596e9/index.m3u8
+شاهد اللعبة
+https://shls-live-enc.edgenextcdn.net/out/v1/d6e1fdee781f4506a6ac147fee5ba715/index.m3u8?aws.manifestfilter=video_height:144-720;video_codec:H264&video_height=144-720&video_codec=H264
+شاهد الحصن
+https://shls-live-enc.edgenextcdn.net/out/v1/9747e20a05794a14b0cfccd7c621dd00/index.m3u8?aws.manifestfilter=video_height:144-720;video_codec:H264&video_height=144-720&video_codec=H264
+شاهد طاش
+https://shls-live-enc.edgenextcdn.net/out/v1/e34e3ac9d2534543a13b44c2b458b0c2/index.m3u8
+شاهد مسرح مصر
+https://mbc1-enc.edgenextcdn.net/out/v1/8fae48b64942450cb5d60b3fb6910de0/index.m3u8
+شاهد سيلفي
+https://mbc1-enc.edgenextcdn.net/out/v1/2a0f4768f7fa42ed813674628b487e95/index.m3u8
+شاهد عرس بيروت
+https://mbc1-enc.edgenextcdn.net/out/v1/0fcbe9a01dc6474cbec18c1027326c50/index.m3u8
+شاهد ناصر القصبي
+https://mbc1-enc.edgenextcdn.net/out/v1/20e003242d244710bfe9ca0fd2b94d00/index.m3u8
+شاهد مرايا
+https://mbc1-enc.edgenextcdn.net/out/v1/a4a39d8e92e34b0780ca602270a59512/index.m3u8
+شاهد حكايات دفعة
+https://shls-live-enc.edgenextcdn.net/out/v1/cf05f1dbbeae4878bbc4a5919cef3391/index.m3u8
+شاهد سكت سفر
+https://shls-live-enc.edgenextcdn.net/out/v1/40031eca7be34c4ea9744bf067f4fefa/index.m3u8
+شاهد الكبير أوي
+https://shls-live-enc.edgenextcdn.net/out/v1/5f5de4f9efe24f758f1364dde5e2a45c/index.m3u8
+شاهد انيمي
+https://mbc1-enc.edgenextcdn.net/out/v1/e7350ddf46c94dddafe14b099394ff56/index.m3u8
+شاهد Highlights
+https://shls-live-enc.edgenextcdn.net/out/v1/18cffab0757d448ca6c1a686d330b346/index.m3u8
+شاهد Red Bull
+https://shls-live-enc.edgenextcdn.net/out/v1/ad35123d4ad041068bce26ae67ee3180/index.m3u8?aws.manifestfilter=video_height:144-720;video_codec:H264&video_height=144-720&video_codec=H264
+شاهد العربية الأنحليزية
+https://mbc1-enc.edgenextcdn.net/out/v1/07a6ab2d57b2453a91bbdd2d46b5865a/index.m3u8
+رؤيا دراما
+https://playlist.fasttvcdn.com/pl/a2le4pbpa6rpzv147haf4w/drama/playlist.m3u8
+رؤيا كوميدي
+https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/roya-comedy/playlist.m3u8
+رؤيا سبورت
+https://playlist.fasttvcdn.com/pl/a2le4pbpa6rpzv147haf4w/youth-jordan/playlist.m3u8
+رؤيا فلسطين
+https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/roya-palestine/playlist.m3u8
+رؤيا مرايا
+https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/maraya/playlist.m3u8
+رؤيا أنتاجات
+https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/roya-production/playlist.m3u8
+رؤيا كرفان
+https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/caravan/playlist.m3u8
+رؤيا حول العالم
+https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/around-the-world/playlist.m3u8
+رؤيا حكي منوع
+https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/haki-monawwa/playlist.m3u8
+رؤيا حلوة يادنيا
+https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/helwa-ya-donya/playlist.m3u8
+رؤيا العالم الكبير
+https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/big-world/playlist.m3u8
+رؤيا 911
+https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/911/playlist.m3u8
+رؤيا طبخ ونفخ
+https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/tabekh-w-nafekh/playlist.m3u8
+رؤيا زيست طبخ
+https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/zst/playlist.m3u8
+رؤيا شيف مان
+https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/zst/playlist.m3u8
+رؤيا طبخ
+https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/roya-kitchen/playlist.m3u8
+رؤيا ساعة محبة
+https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/saeet-mahabbeh/playlist.m3u8
+رؤيا مسرحيات
+https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/masrahyyat/playlist.m3u8
+رؤيا انا بحكيلك القصة
+https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/ana-bahkilak-elgessa/playlist.m3u8
+رؤيا عادل أمام
+https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/adel-imam-movies/playlist.m3u8
+رؤيا الزعيم
+https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/alzaeem/playlist.m3u8
+رؤيا نادين نجيم
+https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/nadinenjaim/playlist.m3u8
+رؤيا أيمن زيدان
+https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/ayman-zaydan/playlist.m3u8
+رؤيا حارة القبة
+https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/haret-alqubbeh/playlist.m3u8
+رؤيا بيئة شامية
+https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/by2ah-shamyeh/playlist.m3u8
+رؤيا أكشن
+https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/action/playlist.m3u8
+رؤيا الهيبة
+https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/alhayba/playlist.m3u8
+رؤيا مجتمعية
+https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/mojtamaii/playlist.m3u8
+رؤيا وثائقيات
+https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/documentaries/playlist.m3u8
+رؤيا موسيقى
+https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/roya-music/playlist.m3u8
+رؤيا أطفال
+https://playlist.fasttvcdn.com/pl/ptllxjd03j6g9oxxjdfapg/roya-kids/playlist/1.m3u8
+رؤيا Red Bull
+https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/redbull/playlist.m3u8
+قناة كربلاء
+https://www.youtube.com/watch?v=Wk1yCL4uh8s
+كربلاء القران الكريم
+https://ktvlive.online/stream/hls/ch1.m3u8
+كربلاء الوثائقية
+https://ktvlive.online/stream/hls/ch3.m3u8
+العراقية 
+https://cdn.catiacast.video/abr/8d2ffb0aba244e8d9101a9488a7daa05/imn/general1/chunks.m3u8
+العراقية الأخبارية
+https://cdn.catiacast.video/abr/78054972db7708422595bc96c6e024ac/imn/news1/chunks.m3u8
+الشرقية 
+https://indexforce.com/home/mystream/chunklist_w887163316.m3u8
+الشرقية نيوز
+https://indexforce.com/alsharqiyalive/mystream/chunklist_w132270014.m3u8
+الدولة 
+https://ffs3.gulfsat.com/aldawlatv/index.m3u8
+دجلة 
+https://ghaasiflu.online/Dijlah/index.m3u8
+التغير 
+https://jmc-live.ercdn.net/altaghier/altaghier.m3u8
+أي نيوز 
+https://live.i-news.tv/hls/2/stream.m3u8
+ U tv 
+https://mn-nl.mncdn.com/utviraqi2/64c80359/index.m3u8
+زاكروس
+https://5a3ed7a72ed4b.streamlock.net/zagrostv/SMIL:myStream.smil/playlist.m3u8
+أفاق 
+https://s1.ettehadlive.com/live/1/playlist.m3u8
+العهد 
+https://s1.ettehadlive.com/live/7/playlist.m3u8
+المسرى
+https://live.bradosti.net/live/Almasra_playlist.m3u8
+عراق المستقبل
+https://viewmedia7219.bozztv.com/wmedia/viewmedia100/web_040/Stream/playlist.m3u8
+الولاية 
+https://nl.livekadeh.com/hls2/alwilayah_tv.m3u8
+سامراء
+https://live.bradosti.net/live/AlSamara/index.m3u8
+الرشيد
+https://media1.livaat.com/static/AL-RASHEED-HD/index.m3u8
+الجوادين
+https://live.aljawadain.org/live/aljawadaintv/playlist.m3u8
+أمام حسين
+https://live.imamhossaintv.com/live/ih2.m3u8
+العباس
+https://live.beitolabbas.tv/live/beitolabbastv.m3u8
+شمس
+https://stream.shams.tv/hls/stream.m3u8
+قناة فورتين
+https://ch14.tv/live/ch4teen1/playlist.m3u8
+فورتين مباشر
+http://ch14.tv/live/ch4teenlive1/playlist.m3u8
+فورتين القران
+http://ch14.tv/live/ch4teenquran/playlist.m3u8
+فورتين كليب
+http://ch14.tv/live/ch4teenclip/playlist.m3u8
+فورتين الثقافية
+http://ch14.tv/live/ch4teendoc/playlist.m3u8
+NRT NEWS
+https://live20.bozztv.com/giatv/giatv-nrt/nrt/chunks.m3u8
+
+`;
 
         const video = document.getElementById('video');
         const list = document.getElementById('channelsList');
+        const qualityBtn = document.getElementById('qualityHqBtn');
+        const qualityDropdown = document.getElementById('qualityDropdown');
+        const playerContainer = document.getElementById('playerContainer');
         let hls = null;
 
-        function playChannel(url) {
-            if (hls) { hls.destroy(); }
-            hls = new Hls();
-            hls.loadSource(url);
-            hls.attachMedia(video);
-            hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
+        function playChannel(url, card) {
+            if (hls) { hls.destroy(); hls = null; }
+            qualityDropdown.style.display = 'none';
+            qualityBtn.style.display = 'none';
+            const oldIframe = document.getElementById('youtubeIframe');
+            if (oldIframe) oldIframe.remove();
+
+            document.querySelectorAll('.channel-card').forEach(e => e.classList.remove('active'));
+            card.classList.add('active');
+
+            if (url.includes('youtube.com') || url.includes('embed/')) {
+                video.style.display = 'none';
+                const iframe = document.createElement('iframe');
+                iframe.id = 'youtubeIframe';
+                iframe.src = url.includes('embed/') ? url : `https://www.youtube.com/embed/${url.split('v=')[1]?.split('&')[0]}?autoplay=1`;
+                iframe.allow = "autoplay; fullscreen";
+                playerContainer.appendChild(iframe);
+            } else {
+                video.style.display = 'block';
+                if (Hls.isSupported() && url.includes('.m3u8')) {
+                    hls = new Hls({xhrSetup: (xhr) => {xhr.setRequestHeader('Referer', 'https://www.google.com/');}});
+                    hls.loadSource(url);
+                    hls.attachMedia(video);
+                    hls.on(Hls.Events.MANIFEST_PARSED, (e, data) => {
+                        if (data.levels.length > 1) {
+                            qualityBtn.style.display = 'block';
+                            updateQualityMenu(hls, hls.currentLevel);
+                        }
+                        video.play().catch(()=>{});
+                    });
+                } else { video.src = url; video.play().catch(()=>{}); }
+            }
         }
 
-        const lines = channelsData.split('\n');
-        lines.forEach((line, index) => {
-            const [name, url] = line.split('|');
-            const card = document.createElement('div');
-            card.className = 'channel-card';
-            card.innerHTML = `<span class="channel-number">${index + 1}</span><span class="channel-name">${name}</span>`;
-            card.onclick = () => {
-                document.querySelectorAll('.channel-card').forEach(c => c.classList.remove('active'));
-                card.classList.add('active');
-                playChannel(url);
-            };
-            list.appendChild(card);
-        });
+        function updateQualityMenu(hlsInstance, selectedIndex) {
+            qualityDropdown.innerHTML = '';
+            hlsInstance.levels.forEach((level, index) => {
+                const opt = document.createElement('div');
+                opt.className = 'quality-item' + (index === selectedIndex ? ' active' : '');
+                opt.tabIndex = "0";
+                opt.innerHTML = `<span class="dot"></span> ${level.height}p`;
+                opt.onclick = () => {
+                    hlsInstance.currentLevel = index;
+                    updateQualityMenu(hlsInstance, index);
+                    qualityDropdown.style.display = 'none';
+                };
+                opt.onkeydown = (e) => { if(e.key === 'Enter') opt.click(); };
+                qualityDropdown.appendChild(opt);
+            });
+        }
+
+        qualityBtn.onclick = () => { qualityDropdown.style.display = (qualityDropdown.style.display === 'block') ? 'none' : 'block'; };
+
+        // بناء القائمة من البيانات
+        const lines = rawChannels.trim().split('\n').filter(l => l.trim() !== "");
+        for (let i = 0; i < lines.length; i += 2) {
+            const name = lines[i].trim();
+            const url = lines[i+1]?.trim();
+            if (name && url) {
+                const card = document.createElement('div');
+                card.className = 'channel-card';
+                card.tabIndex = "0";
+                card.innerHTML = `<span class="channel-number">${(i/2) + 1}</span><span class="channel-name">${name}</span>`;
+                card.onclick = () => playChannel(url, card);
+                card.onkeydown = (e) => { if(e.key === 'Enter') card.click(); };
+                list.appendChild(card);
+                if (i === 0) card.click();
+            }
+        }
     </script>
 </body>
 </html>
