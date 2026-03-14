@@ -2,671 +2,97 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>مشغل القنوات</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alfaham Store</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700&display=swap" rel="stylesheet">
+    
     <style>
-        *{margin:0;padding:0;box-sizing:border-box;}
-        body{background:black;font-family:'Cairo',sans-serif;color:white;height:100vh;display:flex;flex-direction:column;overflow:hidden;}
-        .player-container{width:100%;background:black;flex-shrink:0;aspect-ratio:16/9;position:relative;}
-        video, #youtubeIframe{width:100%;height:100%;background:black;outline:none;border:none;}
-        
-        .channels-container{background:#1a1a1a;flex-grow:1;padding:8px;overflow-y:auto;}
-        .channels-grid{display:flex;flex-direction:column;gap:4px;}
-        
-        .channel-card{background:#2a2a2a;border-radius:6px;padding:8px 12px;cursor:pointer;border:1px solid #3a3a3a;color:white;font-size:14px;text-align:right;display:flex;align-items:center;gap:8px;}
-        .channel-number{display:inline-flex;align-items:center;justify-content:center;background:#444;color:#fff;font-size:12px;font-weight:600;width:22px;height:22px;border-radius:4px;flex-shrink:0;}
-        .channel-card:hover{background:#3a3a3a;}
-        .channel-card.active{border-right:3px solid white;background:#3a3a3a;}
-        .channel-card.active .channel-number{background:#e74c3c;}
-        .channel-name{flex:1;}
+        /* التنسيقات العامة */
+        body { 
+            font-family: 'Cairo', sans-serif !important; 
+            background: #f4f4f4; 
+            margin: 0; 
+            padding: 0; 
+        }
 
-        .quality-hq-btn {position: absolute;bottom: 65px;right: 10px;background: rgba(0,0,0,0.4);color: white;border: 1px solid rgba(255,255,255,0.1);border-radius: 4px;padding: 5px 12px;font-size: 12px;cursor: pointer;z-index: 1000;display: none;transition: opacity 0.3s;}
-        
-        #qualityMenu {position: absolute;bottom: 65px;right: 65px;background: rgba(0,0,0,0.7);border: 1px solid rgba(255,255,255,0.1);border-radius: 4px;display: none;z-index: 1000;min-width: 70px;}
-        .quality-option {padding: 8px 12px;cursor: pointer;font-size: 12px;text-align: center;border-bottom: 1px solid rgba(255,255,255,0.1);display: flex;align-items: center;justify-content: center;gap: 5px;}
-        .quality-option:hover {background: rgba(255,255,255,0.2);}
-        
-        .dot {width: 6px;height: 6px;background: #e74c3c;border-radius: 50%;display: none;}
-        .quality-option.selected .dot {display: block;}
+        /* الهيدر باللون الأسود وبدون ظل */
+        .header-text {
+            background: #000000;
+            padding: 20px; 
+            text-align: center;
+            box-shadow: none; /* إزالة الظل تماماً */
+            margin-bottom: 30px;
+        }
+
+        /* تكبير الشعار بشكل أكبر */
+        .header-text img {
+            max-height: 140px; /* تم تكبير الحجم */
+            width: auto;
+            display: inline-block;
+        }
+
+        /* حاوية الكروت */
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 0 20px 40px 20px;
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        .card {
+            display: block;
+            width: 100%;
+            aspect-ratio: 16 / 5; 
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: 0.3s;
+            background: #fff;
+        }
+
+        .card:hover { 
+            transform: translateY(-5px); 
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+        }
+
+        .card img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: fill;
+        }
+
+        /* تحسينات الموبايل */
+        @media (max-width: 480px) {
+            .header-text { padding: 15px; }
+            .header-text img { max-height: 85px; } /* تعديل للموبايل */
+            .card-container { gap: 15px; padding: 0 15px; }
+        }
     </style>
 </head>
-<body onmousemove="showControls()" ontouchstart="showControls()">
-    <div class="player-container" id="playerContainer">
-        <video id="video" playsinline controls crossorigin="anonymous"></video>
-        <button class="quality-hq-btn" id="qualityHqBtn">HQ</button>
-        <div id="qualityMenu"></div>
+<body>
+
+    <header class="header-text">
+        <img src="https://b.top4top.io/p_3725z11nv0.png" alt="Alfaham Store Logo">
+    </header>
+
+    <div class="card-container">
+        
+        <a href="https://alfahamtv.apk.com" class="card">
+            <img src="https://l.top4top.io/p_37258g2190.png" alt="تطبيق الفحام">
+        </a>
+
+        <a href="https://alfahamtv.apk.com" class="card">
+            <img src="https://l.top4top.io/p_37258g2190.png" alt="تطبيق الفحام">
+        </a>
+
+        <a href="https://alfahamtv.apk.com" class="card">
+            <img src="https://l.top4top.io/p_37258g2190.png" alt="تطبيق الفحام">
+        </a>
+
     </div>
-    <div class="channels-container">
-        <div class="channels-grid" id="channelsList"></div>
-    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <script>
-        // جميع القنوات المضافة
-        const channelsData = `
-قناة كربلاء الفضائية
-https://www.youtube.com/watch?v=rNfRGYCE-xE
-MBC 1
-https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-1-na/eec141533c90dd34722c503a296dd0d8/index.m3u8
-MBC 1 USA
-https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-1-usa/fdac3a4fc0473f1f56e07ec1d63a4b7b/index.m3u8
-MBC 2
-https://ev-fuj-dxb-cdn-edge2.aws.playco.com/live/eds/MBC_2HD/DASH/MBC_2HD.mpd
-MBC 4
-https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-4/24f134f1cd63db9346439e96b86ca6ed/index.m3u8
-MBC 5
-https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-5/ee6b000cee0629411b666ab26cb13e9b/index.m3u8
-MBC IRAQ
-https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-iraq/e38c44b1b43474e1c39cb5b90203691e/index.m3u8
-MBC Drama
-https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-drama/2c28a458e2f3253e678b07ac7d13fe71/index.m3u8
-MBC Drama USA
-https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-drama-usa/ea2f5db904aff224b7066e59c7f585a2/index.m3u8
-MBC Drama Plus
-https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-plus-drama/e37251ec2aac8f6c98f75cd0fa37cd28/index.m3u8
-MBC Masr
-https://shls-masr-ak.akamaized.net/out/v1/d5036cabf11e45bf9d0db410ca135c18/index.m3u8
-MBC Masr USA
-https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-masr-usa/cd8d40acdab28aac0582faa3bd3983f1/index.m3u8
-MBC Masr 2
-https://shd-gcp-live.akamaized.net/live/bitmovin-mbc-masr-2/754931856515075b0aabf0e583495c68/index.m3u8
-MBC Masr Drama
-https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-masr-drama/567b703c19ede6598222de81b0e4508b/index.m3u8
-MBC Action
-https://m3u.iranvids.com/mbc-action/output.m3u8
-MBC MAX
-https://freechannelsonly.xyz/live/u7JewhWwuWkS/BRBRyWDNUEr6/21.m3u8
-MBC Bollywood
-https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-bollywood/546eb40d7dcf9a209255dd2496903764/index.m3u8
-MBC Persia
-https://mbc1-enc.edgenextcdn.net/out/v1/0965e4d7deae49179172426cbfb3bc5e/index.m3u8
-MBC GAMING
-https://halalondon-live.ercdn.net/halalondon/halalondon.m3u8
-MBC PLUS ELIFE
-https://mbc1-enc.edgenextcdn.net/out/v1/0965e4d7deae49179172426cbfb3bc5e/index.m3u8
-MBC Variety +
-https://mbc1-enc.edgenextcdn.net/out/v1/0965e4d7deae49179172426cbfb3bc5e/index.m3u8
-MBC FM
-https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-fm/3f36f7db6086acf058dc51681c87f8ad/index.m3u8
-MBC Wanasah
-https://mbc1-enc.edgenextcdn.net/out/v1/0965e4d7deae49179172426cbfb3bc5e/index.m3u8
-Mix One
-https://ml-pull-hwc.myco.io/MixONE/hls/index.m3u8
-Mix BelAraby
-https://ml-pull-hwc.myco.io/MixBelAraby/hls/index.m3u8
-MIX TV
-https://ml-pull-hwc.myco.io/MixTV/hls/index.m3u8
-Dubai One
-https://dminnvllta.cdn.mgmlcdn.com/dubaione/smil:dubaione.stream.smil/chunklist.m3u8
-
-شاهد أفلام الأكشن
-https://shls-live-enc.edgenextcdn.net/out/v1/f6d718e841f8442f8374de47f18c93a7/index.m3u8?aws.manifestfilter=video_height:144-720;video_codec:H264&video_height=144-720&video_codec=H264
-شاهد أفلام الإثارة
-https://mbc1-enc.edgenextcdn.net/out/v1/46079e838e65490c8299f902a7731168/index.m3u8
-شاهد أفلام
-https://mbc1-enc.edgenextcdn.net/out/v1/0044dd4b001a466c941ad77b04a574a2/index.m3u8
-شاهد باب الحارة
-https://mbc1-enc.edgenextcdn.net/out/v1/948c54279b594944adde578c95f1d7d1/index.m3u8
-شاهد العاصوف
-https://mbc1-enc.edgenextcdn.net/out/v1/0afd546fcb5342f69d6bfff2dd1596e9/index.m3u8
-شاهد اللعبة
-https://shls-live-enc.edgenextcdn.net/out/v1/d6e1fdee781f4506a6ac147fee5ba715/index.m3u8?aws.manifestfilter=video_height:144-720;video_codec:H264&video_height=144-720&video_codec=H264
-شاهد الحصن
-https://shls-live-enc.edgenextcdn.net/out/v1/9747e20a05794a14b0cfccd7c621dd00/index.m3u8?aws.manifestfilter=video_height:144-720;video_codec:H264&video_height=144-720&video_codec=H264
-شاهد طاش
-https://shls-live-enc.edgenextcdn.net/out/v1/e34e3ac9d2534543a13b44c2b458b0c2/index.m3u8
-شاهد مسرح مصر
-https://mbc1-enc.edgenextcdn.net/out/v1/8fae48b64942450cb5d60b3fb6910de0/index.m3u8
-شاهد سيلفي
-https://mbc1-enc.edgenextcdn.net/out/v1/2a0f4768f7fa42ed813674628b487e95/index.m3u8
-شاهد عرس بيروت
-https://mbc1-enc.edgenextcdn.net/out/v1/0fcbe9a01dc6474cbec18c1027326c50/index.m3u8
-شاهد ناصر القصبي
-https://mbc1-enc.edgenextcdn.net/out/v1/20e003242d244710bfe9ca0fd2b94d00/index.m3u8
-شاهد مرايا
-https://mbc1-enc.edgenextcdn.net/out/v1/a4a39d8e92e34b0780ca602270a59512/index.m3u8
-شاهد حكايات دفعة
-https://shls-live-enc.edgenextcdn.net/out/v1/cf05f1dbbeae4878bbc4a5919cef3391/index.m3u8
-شاهد سكت سفر
-https://shls-live-enc.edgenextcdn.net/out/v1/40031eca7be34c4ea9744bf067f4fefa/index.m3u8
-شاهد الكبير أوي
-https://shls-live-enc.edgenextcdn.net/out/v1/5f5de4f9efe24f758f1364dde5e2a45c/index.m3u8
-شاهد انيمي
-https://mbc1-enc.edgenextcdn.net/out/v1/e7350ddf46c94dddafe14b099394ff56/index.m3u8
-شاهد Highlights
-https://shls-live-enc.edgenextcdn.net/out/v1/18cffab0757d448ca6c1a686d330b346/index.m3u8
-شاهد Red Bull
-https://shls-live-enc.edgenextcdn.net/out/v1/ad35123d4ad041068bce26ae67ee3180/index.m3u8?aws.manifestfilter=video_height:144-720;video_codec:H264&video_height=144-720&video_codec=H264
-شاهد العربية الأنحليزية
-https://mbc1-enc.edgenextcdn.net/out/v1/07a6ab2d57b2453a91bbdd2d46b5865a/index.m3u8
-رؤيا دراما
-https://playlist.fasttvcdn.com/pl/a2le4pbpa6rpzv147haf4w/drama/playlist.m3u8
-رؤيا كوميدي
-https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/roya-comedy/playlist.m3u8
-رؤيا سبورت
-https://playlist.fasttvcdn.com/pl/a2le4pbpa6rpzv147haf4w/youth-jordan/playlist.m3u8
-رؤيا فلسطين
-https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/roya-palestine/playlist.m3u8
-رؤيا مرايا
-https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/maraya/playlist.m3u8
-رؤيا أنتاجات
-https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/roya-production/playlist.m3u8
-رؤيا كرفان
-https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/caravan/playlist.m3u8
-رؤيا حول العالم
-https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/around-the-world/playlist.m3u8
-رؤيا حكي منوع
-https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/haki-monawwa/playlist.m3u8
-رؤيا حلوة يادنيا
-https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/helwa-ya-donya/playlist.m3u8
-رؤيا العالم الكبير
-https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/big-world/playlist.m3u8
-رؤيا 911
-https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/911/playlist.m3u8
-رؤيا طبخ ونفخ
-https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/tabekh-w-nafekh/playlist.m3u8
-رؤيا زيست طبخ
-https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/zst/playlist.m3u8
-رؤيا شيف مان
-https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/zst/playlist.m3u8
-رؤيا طبخ
-https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/roya-kitchen/playlist.m3u8
-رؤيا ساعة محبة
-https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/saeet-mahabbeh/playlist.m3u8
-رؤيا مسرحيات
-https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/masrahyyat/playlist.m3u8
-رؤيا انا بحكيلك القصة
-https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/ana-bahkilak-elgessa/playlist.m3u8
-رؤيا عادل أمام
-https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/adel-imam-movies/playlist.m3u8
-رؤيا الزعيم
-https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/alzaeem/playlist.m3u8
-رؤيا نادين نجيم
-https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/nadinenjaim/playlist.m3u8
-رؤيا أيمن زيدان
-https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/ayman-zaydan/playlist.m3u8
-رؤيا حارة القبة
-https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/haret-alqubbeh/playlist.m3u8
-رؤيا بيئة شامية
-https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/by2ah-shamyeh/playlist.m3u8
-رؤيا أكشن
-https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/action/playlist.m3u8
-رؤيا الهيبة
-https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/alhayba/playlist.m3u8
-رؤيا مجتمعية
-https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/mojtamaii/playlist.m3u8
-رؤيا وثائقيات
-https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/documentaries/playlist.m3u8
-رؤيا موسيقى
-https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/roya-music/playlist.m3u8
-رؤيا Red Bull
-https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/redbull/playlist.m3u8
-واجد أفلام
-https://1001ch2-i.akamaihd.net/aflam/live_1080p/chunks.m3u8
-واجد كوميدي
-https://1001ch1-i.akamaihd.net/comedy/live_1080p/chunks.m3u8
-واجد مسلسلات
-https://1001ch2-i.akamaihd.net/mosalsalat/live_1080p/chunks.m3u8
-واجد شاميات
-https://1001ch2-i.akamaihd.net/shamiyat/live_1080p/chunks.m3u8
-واجد خليجيات
-https://1001ch1-i.akamaihd.net/khalijiyat/live_1080p/chunks.m3u8
-واجد كلاسيك
-https://1001ch2-i.akamaihd.net/classic/live_1080p/chunks.m3u8
-واجد وطن ع وتر
-https://1001ch1-i.akamaihd.net/watan_a_watar/live_1080p/chunks.m3u8
-واجد الزعيم
-https://1001ch1-i.akamaihd.net/al_zaeem/live_1080p/chunks.m3u8
-واجد سعاد حسني
-https://1001ch1-i.akamaihd.net/souad_hosny/live_1080p/chunks.m3u8
-واجد اسماعيل ياسين
-https://1001ch2-i.akamaihd.net/ismail_yasin/live_1080p/chunks.m3u8
-روتانا سينما
-https://h1001.hibridcdn.net/rotana/cinema_85Y8t8SvzbRyXj9B/rotana/cinema_240p/chunks.m3u8
-روتانا سينما 2
-https://h1001.hibridcdn.net/rotana/cinemamasr-bN2CWk47DZhzXiu71PiOnwcrSkZFYvNH_1080p/chunks.m3u8
-روتانا دراما
-https://h1001.hibridcdn.net/rotana/drama-pfOqOsSYp1NnMk79TOOjli4A3Jo7bmwT_1080p/chunks.m3u8
-روتانا خليجية
-https://h1001.hibridcdn.net/rotana/khaleejiya-B1QY35bVB7e9SUbi6mh0uixFAVdDACJf_1080p/chunks.m3u8
-روتانا كوميدي
-https://h1001.hibridcdn.net/rotana/comedy-Pwa08Rb1tQTnil4evnKurGhFFqvnDBZo_1080p/chunks.m3u8
-روتانا أفلام بلس
-https://h1001.hibridcdn.net/rotana/aflamplus-5uduinFJ0qr742HD0aSMOr21qotSg562_1080p/chunks.m3u8
-روتانا أطفال
-https://h1001.hibridcdn.net/rotana/kids_2X9by3GFdMqYr8zK/rotana/kids_720p/chunks.m3u8
-سبيس ستون
-https://shd-gcp-live.edgenextcdn.net/live/bitmovin-spacetoon/d8382fb9ab4b2307058f12c7ea90db54/index.m3u8
-MBC 3
-https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-3-usa/5d58265a862a476dc7f97694addb5ded/index.m3u8
-قناة ماجد 
-https://admn-live-cdn-lb.starzplayarabia.com/out/v1/admn_tv_enc/majid/majid_hls_nd/index.m3u8
-أفران باخجة
-https://5dcabf026b188.streamlock.net/afarinTV/livestream/playlist.m3u8
-أفران 
-https://65f16f0fdfc51.streamlock.net/afarinTV/livestream/playlist.m3u8
-اطفال ومواهب
-https://5d658d7e9f562.streamlock.net/atfal1.com/atfal2/playlist.m3u8
-اطفال مرايا
-https://live.kwikmotion.com/smckidslive/tjkids1.smil/playlist.m3u8
-koogi 
-http://media6.smc-host.com:1935/koogi.tv/koogi.smil/playlist.m3u8
-طيور الجنة
-https://manifest.googlevideo.com/api/manifest/hls_variant/expire/1745133206/ei/NkoEaJqFJomBi9oP26i7wQ8/ip/212.95.133.30/id/UcQPvoO4wzk.6/source/yt_live_broadcast/requiressl/yes/xpc/EgVo2aDSNQ%3D%3D/tx/51380152/txs/51380152%2C51380153%2C51380154%2C51380155/hfr/1/playlist_duration/30/manifest_duration/30/bui/AccgBcMZ8O13gDuVRQoRa_t7qtYL-ARB2hMwT914nDsb85A9QZJmPR2KRcUCumUwWObIyJd9wW7OnT0a/spc/_S3wKjhUgdGStXdBcrpCYMx1VA3cC01srDJAKozOFVIYBARUt7_Z03qPeUxxrRhQVFH7rhhaoA/vprv/1/go/1/rqh/5/pacing/0/nvgoi/1/ncsapi/1/keepalive/yes/fexp/51331020/dover/11/itag/0/playlist_type/DVR/sparams/expire%2Cei%2Cip%2Cid%2Csource%2Crequiressl%2Cxpc%2Ctx%2Ctxs%2Chfr%2Cplaylist_duration%2Cmanifest_duration%2Cbui%2Cspc%2Cvprv%2Cgo%2Crqh%2Citag%2Cplaylist_type/sig/AJfQdSswRQIgNMw3qg9v_5XBwVmsIQo-3FDpcVdou4Fn9osipL-TwfkCIQCz_fd3UEhGFnqCIr-59bkAIA79AaDYIzrHgksb1dPoFQ%3D%3D/file/index.m3u8
-رؤيا أطفال
-https://playlist.fasttvcdn.com/pl/ptllxjd03j6g9oxxjdfapg/roya-kids/playlist/1.m3u8
-فورتين أطفال
-http://ch14.tv/live/ch4teenkids/playlist.m3u8
-شهاب
-https://yt3.googleusercontent.com/yMIPdpcyP7XZ8r6-CFw2YV00QeZYtclqAz9ZPqiifH10qV5J-dg5HZiy2CgvpQ--V3gBOIdW=s160-c-k-c0x00ffffff-no-rj
-DW
-https://dwamdstream103.akamaized.net/hls/live/2015526/dwstream103/index.m3u8
-
-كربلاء القران الكريم
-https://ktvlive.online/stream/hls/ch1.m3u8
-كربلاء الوثائقية
-https://ktvlive.online/stream/hls/ch3.m3u8
-العراقية 
-https://cdn.catiacast.video/abr/8d2ffb0aba244e8d9101a9488a7daa05/imn/general1/chunks.m3u8
-العراقية الأخبارية
-https://cdn.catiacast.video/abr/78054972db7708422595bc96c6e024ac/imn/news1/chunks.m3u8
-الشرقية 
-https://indexforce.com/home/mystream/chunklist_w887163316.m3u8
-الشرقية نيوز
-https://indexforce.com/alsharqiyalive/mystream/chunklist_w132270014.m3u8
-الأولى عراق
-https://live.alawla.tv/hls/stream.m3u8
-الدولة 
-https://ffs3.gulfsat.com/aldawlatv/index.m3u8
-دجلة 
-https://ghaasiflu.online/Dijlah/index.m3u8
-التغير 
-https://jmc-live.ercdn.net/altaghier/altaghier.m3u8
-أي نيوز 
-https://live.i-news.tv/hls/2/stream.m3u8
- U tv 
-https://mn-nl.mncdn.com/utviraqi2/64c80359/index.m3u8
-زاكروس
-https://5a3ed7a72ed4b.streamlock.net/zagrostv/SMIL:myStream.smil/playlist.m3u8
-أفاق 
-https://s1.ettehadlive.com/live/1/playlist.m3u8
-العهد 
-https://s1.ettehadlive.com/live/7/playlist.m3u8
-المسرى
-https://live.bradosti.net/live/Almasra_playlist.m3u8
-عراق المستقبل
-https://viewmedia7219.bozztv.com/wmedia/viewmedia100/web_040/Stream/playlist.m3u8
-الولاية 
-https://nl.livekadeh.com/hls2/alwilayah_tv.m3u8
-سامراء
-https://live.bradosti.net/live/AlSamara/index.m3u8
-الرشيد
-https://media1.livaat.com/static/AL-RASHEED-HD/index.m3u8
-الجوادين
-https://live.aljawadain.org/live/aljawadaintv/playlist.m3u8
-أمام حسين
-https://live.imamhossaintv.com/live/ih2.m3u8
-العباس
-https://live.beitolabbas.tv/live/beitolabbastv.m3u8
-شمس
-https://stream.shams.tv/hls/stream.m3u8
-قناة فورتين
-https://ch14.tv/live/ch4teen1/playlist.m3u8
-فورتين مباشر
-http://ch14.tv/live/ch4teenlive1/playlist.m3u8
-فورتين القران
-http://ch14.tv/live/ch4teenquran/playlist.m3u8
-فورتين كليب
-http://ch14.tv/live/ch4teenclip/playlist.m3u8
-فورتين الثقافية
-http://ch14.tv/live/ch4teendoc/playlist.m3u8
-NRT NEWS
-https://live20.bozztv.com/giatv/giatv-nrt/nrt/chunks.m3u8
-مكة
-https://media2.streambrothers.com:1936/8122/8122/playlist.m3u8
-الثقافية السعودية
-https://media2.streambrothers.com:1936/8122/8122/playlist.m3u8
-السنة النبوية
-http://m.live.net.sa:1935/live/sunnah/playlist.m3u8
-القران الكريم السعودية
-https://cdn-globecast.akamaized.net/live/eds/saudi_quran/hls_roku/saudi_quran-avc1_600000=2-mp4a_145600_ara=3.m3u8
-قناة الخليج السعودية
-https://mn-nl.mncdn.com/khalij/khalij/playlist.m3u8
-ذكريات السعودية
-https://al-ekhbaria-prod-dub.shahid.net/out/v1/ef87956651694f4ba2ccc16e852dbb95/index.m3u8
-العربية
-https://live.alarabiya.net/alarabiapublish/alarabiya.smil/playlist.m3u8
-قناة العربية Business
-https://alarabiya-business-enc.edgenextcdn.net/out/v1/126027fa2f8c4d19be4551b77ec08cbb/index.m3u8
-العربية برامج
-https://d1j4r34gq3qw9y.cloudfront.net/out/v1/96804f3a14864641a21c25e8ca9afb74/index.m3u8
-CGTN العربية
-https://arabic-livews.cgtn.com/hls/LSveq57bErWLinBnxosqjisZ220802LSTefTAS9zc9mpU08y3np9TH220802cd/playlist.m3u8
-العربية cnbc
-https://arabic-livews.cgtn.com/hls/LSveq57bErWLinBnxosqjisZ220802LSTefTAS9zc9mpU08y3np9TH220802cd/playlist.m3u8
-العربي
-https://alarabyta.cdn.octivid.com/alaraby/smil:alaraby.stream.smil/chunklist.m3u8
-العربي 2
-https://alarabyta.cdn.octivid.com/alaraby2n/smil:alaraby2n.stream.smil/chunklist.m3u8
-نبأ السعودية
-http://31.14.40.237:1935/live/Nabaa/playlist.m3u8
-الشرق الأخبارية
-https://svs.itworkscdn.net/bloomberarlive/bloomberg.smil/playlist_dvr.m3u8
-السعودية sbc
-https://live.kwikmotion.com/sbclive/sbc.smil/playlist_dvr.m3u8
-الأخبارية السعودية
-https://live.kwikmotion.com/ikhbariyalive/ikhbariya.smil/playlist_dvr.m3u8
-السعودية الأن
-https://live.kwikmotion.com/ksasports4live/ksasports4.smil/playlist_dvr.m3u8?hdnts=exp=1768866154~acl=/ksasports4live/ksasports4.smil/*~hmac=1464defca8099b183c566806376d1bf81e973063779a07173d5aee01eb59ece4
-الجزيرة
-https://live-hls-web-aja.getaj.net/AJA/03.m3u8
-الجزيرة مباشر
-https://live-hls-apps-ajm24-fa.getaj.net/AJM24/index.m3u8
-اذاعة الرياض
-https://live.kwikmotion.com/sbrksariyadhradiolive/srpksariyadhradio/chunks.m3u8
-السعودية الفضائية
-https://shd-gcp-live.edgenextcdn.net/live/bitmovin-saudi-tv/2ad66056b51fd8c1b624854623112e43/index.m3u8
-الحوار السعودية
-https://mn-nl.mncdn.com/alhiwar_live/smil:alhiwar.smil/playlist.m3u8
-الشرق Discovery
-https://svs.itworkscdn.net/asharqdiscoverylive/asharqd.smil/playlist_dvr.m3u8
-الشرق الوثائقية
-https://svs.itworkscdn.net/asharqdocumentarylive/asharqdocumentary.smil/playlist_dvr.m3u8
-الشرق Bloomberg
-https://asharq-prod-dub-enc.edgenextcdn.net/out/v1/3b6b4902cf8747a28619411239584002/index.m3u8
-بداية
-https://shls-live-enc.edgenextcdn.net/out/v1/97427be47b79457b9ca245e22a8db23a/index.m3u8
-اقرأ عربي
-https://playlist.fasttvcdn.com/pl/dlkqw1ftuvuuzkcb4pxdcg/Iqraafasttv3/playlist.m3u8
-اقرأ القران
-https://playlist.fasttvcdn.com/pl/dlkqw1ftuvuuzkcb4pxdcg/Iqraafasttv2/playlist.m3u8
-ON E
-https://bcovlive-a.akamaihd.net/3dc60bab470f4c9fbf00408ecb7c3d7a/eu-west-1/6057955906001/playlist_dvr.m3u8
-قناة الشرق المصرية
-https://mn-nl.mncdn.com/elsharq_live/live/playlist.m3u8
-قناة مكملين المصرية
-http://mn-nl.mncdn.com/mekameleen/smil:mekameleentv.smil/playlist.m3u8
-NPC DRAMA
-https://d35j504z0x2vu2.cloudfront.net/v1/master/0bc8e8376bd8417a1b6761138aa41c26c7309312/pnc-drama/playlist.m3u8
-المصرية ten
-https://weyyak-live.akamaized.net/weyyak_ten_tv/index.m3u8
-الغد 
-https://eazyvwqssi.erbvr.com/alghadtv/alghadtv.m3u8
-القاهرة الأخبارية
-https://bcovlive-a.akamaihd.net/d30cbb3350af4cb7a6e05b9eb1bfd850/eu-west-1/6057955906001/playlist.m3u8
-الشعوب المصرية
-https://alshoobtv.rp.tactivemedia.com/alshoobtv/live/playlist.m3u8
-Cairo اليوم
-https://ffs3.gulfsat.com/hbc/index.m3u8
-Qatar TV
-https://qatartv.akamaized.net/hls/live/2026573/qtv1/master.m3u8
-Qatar TV 2
-https://qatartv.akamaized.net/hls/live/2026574/qtv2/master.m3u8
-الريان
-https://svs.itworkscdn.net/alrayyanlive/alrayyan.smil/playlist.m3u8
-الريان القديم
-https://svs.itworkscdn.net/alrayyanqadeemlive/alrayyanqadeem.smil/playlist.m3u8
-البحرين
-https://5c7b683162943.streamlock.net/live/ngrp:bahraintvmain_all/playlist.m3u8
-البحرين القران الكريم
-https://5c7b683162943.streamlock.net/live/ngrp:bahrainquran_all/playlist.m3u8
-البحرين انترنشنل
-https://5c7b683162943.streamlock.net/live/ngrp:bahraininternational_all/playlist.m3u8
-فلسطين اليوم
-https://live.paltodaytv.com/paltv/live/playlist.m3u8
-فلسطين راجعين
-https://mn-nl.mncdn.com/palabroad/live/playlist.m3u8
-الكويت 1
-https://kwtktv1ta.cdn.mangomolo.com/ktv1/smil:ktv1.stream.smil/chunklist.m3u8
-الكويت 2
-https://kwtktv2ta.cdn.mangomolo.com/ktv2/smil:ktv2.stream.smil/chunklist.m3u8
-الكويت الأخبار
-https://kwtkbta.cdn.mangomolo.com/kb/smil:kb.stream.smil/chunklist.m3u8
-الكويت إثراء
-https://kwtethta.cdn.mangomolo.com/eth/smil:eth.stream.smil/chunklist.m3u8
-الكويت العربي
-https://kwtktvata.cdn.mangomolo.com/ktva/smil:tktva.stream.smil/chunklist.m3u8
-الكويت القرين
-https://kwtktvaqta.cdn.mangomolo.com/ktvaq/smil:tktvaq.stream.smil/chunklist.m3u8
-بينونه
-https://admn-live-cdn-lb.starzplayarabia.com/out/v1/admn_tv_enc/baynounah/baynounah_hls_nd/index.m3u8
-الوسطى
-https://svs.itworkscdn.net/alwoustalive/alwoustatv.smil/playlist.m3u8
-ناشيونال جيوغرافيك
-https://vo-live.cdb.cdn.orange.com/Content/Channel/NationalGeographicHDChannel/HLS/index.m3u8
-الشارقة 1
-https://svs.itworkscdn.net/smc1live/smc1.smil/playlist.m3u8
-الشارقة 2
-https://svs.itworkscdn.net/smc2live/smc2tv.smil/playlist.m3u8
-المشهد
-https://bcovlive-a.akamaihd.net/20c3ca22be3c4f03b30afbf3c92cfd14/ap-south-1/6313884884001/playlist.m3u8
-Oman TV
-https://partneta.cdn.mgmlcdn.com/omantv/smil:omantv.stream.smil/index.m3u8
-عمان مباشر
-https://partwota.cdn.mgmlcdn.com/omlive/smil:omlive.stream.smil/index.m3u8
-عمان الثقافية
-https://partwota.cdn.mgmlcdn.com/omcultural/smil:omcultural.stream.smil/index.m3u8
-الأستقامة
-http://jmc-live.ercdn.net/alistiqama/alistiqama.m3u8
-التلفزيون الأردني
-https://jrtv-live.ercdn.net/jordanhd/jordanhd.m3u8
-عمان
-https://ammantv-live.ercdn.net/ammantvhd/ammantvhd.m3u8
-الحقيقة الدولية
-https://ghaasiflu.online/alhqeqa/tracks-v1a1/mono.m3u8
-المملكة
-https://bcovlive-a.akamaihd.net/4109c7ba30fd4a44ad9afe917c67a8c8/eu-central-1/6415809151001/playlist.m3u8
-أفريقيا 1
-http://africatv.live.net.sa:1935/live/africatv/mono.m3u8
-افريقيا 2
-http://africatv.live.net.sa:1935/live/africatv2/mono.m3u8
-افريقيا 3
-http://africatv.live.net.sa:1935/live/africatv3/gmswf.m3u8
-السودان الفضائية
-https://tgn.bozztv.com/trn03/gin-sudantv/index.m3u8
-افريقيا 24
-https://edge12.vedge.infomaniak.com/livecast/ik:africa24/manifest.m3u8
-افريقيا 24 سبورت
-https://edge17.vedge.infomaniak.com/livecast/ik:africa24sport/manifest.m3u8
-ليبيا الوطنية
-https://cdn-globecast.akamaized.net/live/eds/libya_al_watanya/hls_roku/index.m3u8
-سلام الليبية
-https://amsart-live.ercdn.net/salamtv/salamtv.m3u8
-المسار الليبية
-https://starmenajo.com/hls/almasar/index.m3u8
-الميادين
-https://mdnlv.cdn.octivid.com/almdn/smil:mpegts.stream.smil/playlist.m3u8
-الاتحاد اللبنانية
-https://live.alittihad.tv:444/ittihad/index.m3u8
-الايمان
-https://svs.itworkscdn.net/alimanlive/imantv.smil/playlist.m3u8
-VDL 24 
-https://svs.itworkscdn.net/vdltvlive/vdltv.smil/playlist.m3u8
-اربيكا
-http://istream.binarywaves.com:8081/hls/arabica/playlist.m3u8
-المنار
-https://edge.fastpublish.me/live/index.m3u8
-NBN 
-http://5.9.119.146:8883/nbn/index.m3u8
-لبنان ONE
-https://hms.pfs.gdn/hms/v1/stream/mtv.m3u8
-LBC
-https://h1001.hibridcdn.net/rotana/lbc-PfFn94SH7LnSG2d0Tp2qliOFBuMstusP_1080p/chunks.m3u8
-الوفاق اللبنانية
-http://alwifaklive.info:1935/live/myStream/playlist.m3u8
-الوطنية التونسية 1
-https://manifest.googlevideo.com/api/manifest/hls_variant/expire/1747225056/ei/gDUkaJv5B_Xbp-oP3uO90Qs/ip/37.237.128.5/id/HtnWcxxyFiU.18/source/yt_live_broadcast/requiressl/yes/xpc/EgVo2aDSNQ%3D%3D/hfr/1/playlist_duration/30/manifest_duration/30/bui/AecWEAZ4tyQ9sQsCgeJ6U48hPFqebR7veNdXgZbe59wf_iQkmRQ7uNHDv8kIBRahcJrdI0Ta-npna6Wj/spc/wk1kZkzbjDxEdCwaV5bU1GCxarrYKJcqpLjVpgkne-B4t0etMuqhd47OH3vFoMeWkzCQMwqsxA/vprv/1/go/1/rqh/5/pacing/0/nvgoi/1/ncsapi/1/keepalive/yes/fexp/51331020/dover/11/itag/0/playlist_type/DVR/sparams/expire%2Cei%2Cip%2Cid%2Csource%2Crequiressl%2Cxpc%2Chfr%2Cplaylist_duration%2Cmanifest_duration%2Cbui%2Cspc%2Cvprv%2Cgo%2Crqh%2Citag%2Cplaylist_type/sig/AJfQdSswRQIhAPlbCYHNurzTGRCagWAjyuZq5zeW2rSx2E1ycn-YRFAGAiAjwp3qX0wLnu5jUNmSJ8-RS4KlDwEncr1bJSsR-Fz35g%3D%3D/file/index.m3u8
-الوطنية التونسية 2
-https://manifest.googlevideo.com/api/manifest/hls_variant/expire/1747225340/ei/nDYkaNeUHq-4mLAP4N6d0Ao/ip/37.237.128.5/id/-VhIAlkMxHE.34/source/yt_live_broadcast/requiressl/yes/xpc/EgVo2aDSNQ%3D%3D/hfr/1/playlist_duration/30/manifest_duration/30/bui/AecWEAZqyMSkmnCPVPnYBD0RtdwOY0mPNbxti8DrmzDfIWCp-CPUXvQmOjOxvxZLV7xWMbRyL9V01SP9/spc/wk1kZj0MbV01Ql3xY88f4Fu6SfowT95AZKmQMn0Pl8rJYyZZT9I8KXx7Q_rKy_0I_nIXfLc8uA/vprv/1/go/1/rqh/5/pacing/0/nvgoi/1/ncsapi/1/keepalive/yes/fexp/51331020/dover/11/itag/0/playlist_type/DVR/sparams/expire%2Cei%2Cip%2Cid%2Csource%2Crequiressl%2Cxpc%2Chfr%2Cplaylist_duration%2Cmanifest_duration%2Cbui%2Cspc%2Cvprv%2Cgo%2Crqh%2Citag%2Cplaylist_type/sig/AJfQdSswRAIgERg3O3GIxOCLeltoHSDQZj2_AP0xA7FAixl_YrbZmx0CID2G3CXRvfhBwWkxKad_QSiCqVdatKkXwyUnC8n4GSwV/file/index.m3u8
-التاسعة التونسية
-https://cdn.bestream.io:19360/alqanat9/alqanat9.m3u8
-اللاذاعة التونسية
-http://webcam.radiotunisienne.tn:1935/radiotn/nationale_video/playlist.m3u8
-إذاعة صفاقس 
-http://webcam.radiotunisienne.tn:1935/radiotn/sfax_video/playlist.m3u8
-اذاعة المنستير
-http://webcam.radiotunisienne.tn:1935/radiotn/monastir_video/playlist.m3u8
-اذاعة الكاف
-http://webcam.radiotunisienne.tn:1935/radiotn/kef_video/playlist.m3u8
-قرطاج
-https://tgn.bozztv.com/gin-36bay3/ga-carthageplus/index.m3u8
-الجزائرية الدولية
-https://cdn.live.easybroadcast.io/abr_corp/66_al24_u4yga6h/playlist.m3u8
-الأولى المغربية
-https://cdn.live.easybroadcast.io/abr_corp/73_aloula_w1dqfwm/playlist_dvr.m3u8
-العيون المغربية
-https://cdn.live.easybroadcast.io/abr_corp/73_laayoune_pgagr52/playlist_dvr.m3u8
-الثقافية المغربية
-https://cdn.live.easybroadcast.io/abr_corp/73_arrabia_hthcj4p/playlist_dvr.m3u8
-المغربية 
-https://cdn.live.easybroadcast.io/abr_corp/73_almaghribia_83tz85q/playlist_dvr.m3u8
-السادسة المغربية
-https://cdn.live.easybroadcast.io/abr_corp/73_assadissa_7b7u5n1/playlist_dvr.m3u8
-السابعة المغربية
-https://fl1002.bozztv.com/ga-aflamtv7/index.m3u8
-تمازيغت المغربية
-https://cdn.live.easybroadcast.io/abr_corp/73_tamazight_tccybxt/playlist_dvr.m3u8
-شدى المغربية
-https://chadatv.vedge.infomaniak.com/livecast/chadatv/playlist.m3u8
-ميديا 1 العربية
-https://cdn.live.easybroadcast.io/abr_corp/83_medi1tv-maghreb_jnbspmg/corp/83_medi1tv-maghreb_jnbspmg_1080p/chunks_dvr.m3u8
-ميديا 1 الافريقية
-https://cdn.live.easybroadcast.io/abr_corp/83_medi1tv-afrique_tm7tu45/corp/83_medi1tv-afrique_tm7tu45_360p/chunks_dvr.m3u8
-ميديا 1 المغربية
-https://cdn.live.easybroadcast.io/abr_corp/83_medi1tv-arabic_g90v4ec/corp/83_medi1tv-arabic_g90v4ec_360p/chunks_dvr.m3u8
-الموريتانية
-http://68.183.41.209:8080/live/5d9a537c64b9c/index.m3u8
-الموريتانية 2
-http://68.183.41.209:8080/live/5d9a537c64b9c/index.m3u8
-المورتانية الرياضية
-http://68.183.41.209:8080/live/5d9a537c64b9c/index.m3u8
-الموريتانية المرابطون
-http://68.183.41.209:8080/live/5d9a537c64b9c/index.m3u8
-التلفزيون الوطني الصومالي
-https://ap02.iqplay.tv:8082/iqb8002/s4ne/playlist.m3u8
-القبيله الصومالية
-http://somali_cable/somali_cable/playlist.m3u8
-الساحل السورية
-https://y2ap5suj6n8tcvfkx79ewm.cdnnarrow.net:8443/hls/sz52gxofqc2a6.m3u8
-سما
-https://y2ap5suj6n8tcvfkx79ewm.cdnnarrow.net:8443/hls/sz52gxofqc2a6.m3u8
-اليوم السورية
-https://iko-live.akamaized.net/AlyuamTV/master.m3u8
-لنا
-https://y2ap5suj6n8tcvfkx79ewm.cdnnarrow.net:8443/hls/sz52gxofqc2a6.m3u8
-لنا بلس
-https://y2ap5suj6n8tcvfkx79ewm.cdnnarrow.net:8443/hls/sz52gxofqc2a6.m3u8
-سوريا 
-https://svs.itworkscdn.net/syriatvlive/syriatv.smil/playlist.m3u8
-سوريا 2
-https://live.kwikmotion.com/syriatv02live/syriatv02.smil/playlist.m3u8
-الاخبارية السورية
-https://manifest.googlevideo.com/api/manifest/hls_variant/expire/1747305994/ei/qnElaN-6I9Ggi9oPlozRoAo/ip/37.237.128.5/id/BxlYdwIqZ5w.1/source/yt_live_broadcast/requiressl/yes/xpc/EgVo2aDSNQ%3D%3D/hfr/1/playlist_duration/30/manifest_duration/30/bui/AecWEAaZFr6pGZHoiE96ySQXGI-lPzQjpzJP3jxLGcyRv9OrA_LsqsxKc1esTjp3u1ZmsGW-MHGwEzLR/spc/wk1kZpEr31kG83cFsVqockocgrjCzYi2NgPdVHvlnUZCl07RuwnJBwdTljtj-goHDUp1EaoL7Q/vprv/1/go/1/rqh/5/pacing/0/nvgoi/1/ncsapi/1/keepalive/yes/fexp/51331020/dover/11/itag/0/playlist_type/DVR/sparams/expire%2Cei%2Cip%2Cid%2Csource%2Crequiressl%2Cxpc%2Chfr%2Cplaylist_duration%2Cmanifest_duration%2Cbui%2Cspc%2Cvprv%2Cgo%2Crqh%2Citag%2Cplaylist_type/sig/AJfQdSswRgIhANxcWpfVQLQZrCRA826yq-A6FZsz_F-rMcWQ17cqhRKiAiEArgKIrPmUrp9lYl33VjRF1zZ_P5eZf5c981vWB68gJ3k%3D/file/index.m3u8
-حلب اليوم
-https://manifest.googlevideo.com/api/manifest/hls_variant/expire/1747308941/ei/LX0laPGBE9Wii9oPweaN8Qk/ip/37.237.128.5/id/CAhOQZFcMuA.1/source/yt_live_broadcast/requiressl/yes/xpc/EgVo2aDSNQ%3D%3D/hfr/1/playlist_duration/30/manifest_duration/30/bui/AecWEAbJVdzsCG3NCtGRCmmXL8DAD2d0KMFJEBqFVSJ-l9ACRT69Tfqvy8BNm-1diPDz9Ya6Mhy07KFR/spc/wk1kZg-ibwmk0qTNz4BQTOnO8TjfdhLxpVV2EB7bQSPvlgLvlJ4tsyIfRCf21GtLlAa56c1Zag/vprv/1/go/1/rqh/5/pacing/0/nvgoi/1/ncsapi/1/keepalive/yes/fexp/51331020/dover/11/itag/0/playlist_type/DVR/sparams/expire%2Cei%2Cip%2Cid%2Csource%2Crequiressl%2Cxpc%2Chfr%2Cplaylist_duration%2Cmanifest_duration%2Cbui%2Cspc%2Cvprv%2Cgo%2Crqh%2Citag%2Cplaylist_type/sig/AJfQdSswRgIhAO0v2amz8cC70JxcX_mXrOSNrvZm55o0idoF3VW-GqxZAiEAs0Ngy4uTYmy1iL_i2yBVddk7CJF96Whgoc3REXMTU9U%3D/file/index.m3u8
-المسيرة
-https://live.cdnbridge.tv/Almasirah/Almasirah_all/playlist.m3u8
-المسيرة مباشر
-https://live2.cdnbridge.tv/AlmasirahMubasher/Mubasher_All/playlist.m3u8
-اليمن الفضائية
-https://tgn.bozztv.com/trn03/gin-yementv/index.m3u8
-اليمن شباب
-https://starmenajo.com/hls/yemenshabab/index.m3u8
-بلقيس اليمنية
-https://manifest.googlevideo.com/api/manifest/hls_variant/expire/1747311771/ei/O4glaKaqBrCp6dsPpeygwQ0/ip/37.237.128.5/id/-NBksguVGHk.1/source/yt_live_broadcast/requiressl/yes/xpc/EgVo2aDSNQ%3D%3D/hfr/1/playlist_duration/30/manifest_duration/30/bui/AecWEAaMzb-KIyA0qbEHWNb5S3aYcGBrTOY6lm5HS5195g5rCZAyxr1-PFv-zlulLzQOVFaxCnz3wnVw/spc/wk1kZqWW4EHN7-ntsvFu1k2Zsj2VH3RhkxKa6-CZMU0AGgdemepIclyIPP7V_0Mp8e8X7EKrsw/vprv/1/go/1/rqh/5/pacing/0/nvgoi/1/ncsapi/1/keepalive/yes/fexp/51331020/dover/11/itag/0/playlist_type/DVR/sparams/expire%2Cei%2Cip%2Cid%2Csource%2Crequiressl%2Cxpc%2Chfr%2Cplaylist_duration%2Cmanifest_duration%2Cbui%2Cspc%2Cvprv%2Cgo%2Crqh%2Citag%2Cplaylist_type/sig/AJfQdSswRQIhAMKNCM_51qJDFLt_aHBl2TWLjAlxbJs4fANkl6r_VaNuAiB2egLNtJGXyAn1w3DDCmdYNwzt6JR7iyudkHD8P74RlA%3D%3D/file/index.m3u8
-
-
-`;
-
-        const playerContainer = document.getElementById('playerContainer');
-        const video = document.getElementById('video');
-        const list = document.getElementById('channelsList');
-        const qualityBtn = document.getElementById('qualityHqBtn');
-        const qualityMenu = document.getElementById('qualityMenu');
-        let hls = null;
-        let hideTimeout;
-
-        function getYouTubeID(url) {
-            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-            const match = url.match(regExp);
-            return (match && match[2].length === 11) ? match[2] : null;
-        }
-
-        function showControls() {
-            if (qualityBtn.style.display !== 'none') {
-                qualityBtn.style.opacity = '1';
-                clearTimeout(hideTimeout);
-                hideTimeout = setTimeout(() => { qualityBtn.style.opacity = '0'; }, 3000);
-            }
-        }
-
-        function playChannel(url, card) {
-            if (hls) { hls.destroy(); hls = null; }
-            qualityMenu.style.display = 'none';
-            qualityBtn.style.display = 'none';
-            const existingIframe = document.getElementById('youtubeIframe');
-            if (existingIframe) existingIframe.remove();
-
-            document.querySelectorAll('.channel-card').forEach(e => e.classList.remove('active'));
-            card.classList.add('active');
-
-            const youtubeID = getYouTubeID(url);
-
-            if (youtubeID) {
-                video.style.display = 'none';
-                const iframe = document.createElement('iframe');
-                iframe.id = 'youtubeIframe';
-                iframe.allow = "autoplay; encrypted-media; picture-in-picture; fullscreen";
-                iframe.src = `https://www.youtube.com/embed/${youtubeID}?autoplay=1&playsinline=1`;
-                playerContainer.appendChild(iframe);
-            } else {
-                video.style.display = 'block';
-                if (Hls.isSupported() && url.includes('.m3u8')) {
-                    hls = new Hls({xhrSetup: (xhr) => {xhr.setRequestHeader('Referer', 'https://www.google.com/');}});
-                    hls.loadSource(url);
-                    hls.attachMedia(video);
-                    hls.on(Hls.Events.MANIFEST_PARSED, (e, data) => {
-                        if (data.levels.length > 1) {
-                            qualityBtn.style.display = 'block';
-                            updateQualityMenu(hls, hls.currentLevel);
-                        }
-                        video.play().catch(()=>{});
-                    });
-                } else { video.src = url; video.play().catch(()=>{}); }
-            }
-        }
-
-        function updateQualityMenu(hlsInstance, selectedIndex) {
-            qualityMenu.innerHTML = '';
-            hlsInstance.levels.forEach((level, index) => {
-                const opt = document.createElement('div');
-                opt.className = 'quality-option' + (index === selectedIndex ? ' selected' : '');
-                opt.innerHTML = `<span class="dot"></span> ${level.height}p`;
-                opt.onclick = () => {
-                    hlsInstance.currentLevel = index;
-                    updateQualityMenu(hlsInstance, index);
-                    qualityMenu.style.display = 'none';
-                };
-                qualityMenu.appendChild(opt);
-            });
-        }
-
-        qualityBtn.onclick = () => { qualityMenu.style.display = (qualityMenu.style.display === 'block') ? 'none' : 'block'; };
-
-        const lines = channelsData.trim().split('\n').filter(l => l.trim() !== "");
-        for (let i = 0; i < lines.length; i += 2) {
-            const name = lines[i].trim();
-            const url = lines[i+1]?.trim();
-            if (name && url) {
-                const card = document.createElement('div');
-                card.className = 'channel-card';
-                card.innerHTML = `<span class="channel-number">${(i/2) + 1}</span><span class="channel-name">${name}</span>`;
-                card.onclick = () => playChannel(url, card);
-                list.appendChild(card);
-                if (i === 0) setTimeout(() => card.click(), 100);
-            }
-        }
-    </script>
 </body>
 </html>
