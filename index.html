@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alfaham Store</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <style>
         /* التنسيقات العامة */
@@ -20,31 +20,41 @@
             background: #000000;
             padding: 20px; 
             text-align: center;
-            box-shadow: none; /* إزالة الظل تماماً */
+            box-shadow: none;
             margin-bottom: 30px;
         }
 
         /* تكبير الشعار بشكل أكبر */
         .header-text img {
-            max-height: 140px; /* تم تكبير الحجم */
+            max-height: 140px;
             width: auto;
             display: inline-block;
         }
 
         /* حاوية الكروت */
         .card-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
             gap: 20px;
             padding: 0 20px 40px 20px;
             max-width: 1100px;
             margin: auto;
         }
 
+        /* عنصر الكرت مع النص */
+        .card-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100px;
+            flex-shrink: 0;
+        }
+
         .card {
             display: block;
-            width: 100%;
-            aspect-ratio: 16 / 5; 
+            width: 100px;
+            height: 100px;
             border-radius: 10px;
             overflow: hidden;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
@@ -64,11 +74,35 @@
             object-fit: fill;
         }
 
+        /* النص تحت الكرت - سطر واحد فقط بدون اقتصاص */
+        .card-label {
+            margin-top: 10px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 16px;
+            font-weight: 900;
+            color: #333;
+            text-align: center;
+            line-height: 1.4;
+            white-space: nowrap;    /* منع الالتفاف إلى سطر جديد */
+            overflow: visible;       /* إظهار النص بالكامل بدون اقتصاص */
+            width: auto;            /* عرض تلقائي حسب محتوى النص */
+            max-width: 100%;        /* منع تجاوز عرض الحاوية */
+        }
+
         /* تحسينات الموبايل */
         @media (max-width: 480px) {
             .header-text { padding: 15px; }
-            .header-text img { max-height: 85px; } /* تعديل للموبايل */
+            .header-text img { max-height: 85px; }
             .card-container { gap: 15px; padding: 0 15px; }
+            .card-item {
+                width: 100px;
+            }
+            .card-label {
+                font-size: 14px;
+                font-weight: 900;
+                white-space: nowrap;    /* سطر واحد في الموبايل أيضاً */
+                overflow: visible;
+            }
         }
     </style>
 </head>
@@ -80,28 +114,68 @@
 
     <div class="card-container">
         
-        <a href="https://alfahamtv.apk.com" class="card">
-            <img src="https://raw.githubusercontent.com/h-80/img/refs/heads/main/Apk%20(1).png" alt="Alfaham tv">
-        </a>
-        <a href="https://tvkidstv.apk.com" class="card">
-            <img src="https://raw.githubusercontent.com/h-80/img/refs/heads/main/Apk%20(3).png" alt="KIDS TV">
-        </a>
-        <a href="https://alfahamtube.apk.com" class="card">
-            <img src="https://raw.githubusercontent.com/h-80/img/refs/heads/main/Apk%20(5).png" alt="Alfaham Tube">
-        </a>
-        <a href="https://alfahamsat.apk.com" class="card">
-            <img src="https://raw.githubusercontent.com/h-80/img/refs/heads/main/Apk%20(6).png" alt="Alfaham Sat">
-        </a>
-        <a href="https://alfahambox.apk.com" class="card">
-            <img src="https://raw.githubusercontent.com/h-80/img/refs/heads/main/Apk%20(7).png" alt="Alfaham Box">
-        </a>
-        <a href="https://alfahamlive.apk.com" class="card">
-            <img src="https://raw.githubusercontent.com/h-80/img/refs/heads/main/Apk%20(4).png" alt="Alfaham Live">
-        </a>
-        <a href="https://alfahamstore.apk.com" class="card">
-            <img src="https://raw.githubusercontent.com/h-80/img/refs/heads/main/Apk%20(2).png" alt="Alfaham Store">
-        </a>
+<div class="card-item">
+            <a href="https://alfahamtv.apk.com" class="card">
+                <img src="https://raw.githubusercontent.com/h-80/img/refs/heads/main/Apk%20(6).png" alt="Alfaham tv">
+            </a>
+            <div class="card-label">Alfaham TV</div>
+        </div>
 
+<div class="card-item">
+            <a href="https://tvkidstv.apk.com" class="card">
+                <img src="https://raw.githubusercontent.com/h-80/img/refs/heads/main/Apk%20(3).png" alt="KIDS TV">
+            </a>
+            <div class="card-label">KIDS TV</div>
+        </div>
+
+<div class="card-item">
+            <a href="https://alfahamtube.apk.com" class="card">
+                <img src="https://raw.githubusercontent.com/h-80/img/refs/heads/main/Apk%20(1).png" alt="Alfaham Tube">
+            </a>
+            <div class="card-label">Alfaham Tube</div>
+        </div>
+
+<div class="card-item">
+            <a href="https://alfahamsat.apk.com" class="card">
+                <img src="https://raw.githubusercontent.com/h-80/img/refs/heads/main/Apk%20(8).png" alt="Alfaham Sat">
+            </a>
+            <div class="card-label">Alfaham Sat</div>
+        </div>
+
+<div class="card-item">
+            <a href="https://alfahambox.apk.com" class="card">
+                <img src="https://raw.githubusercontent.com/h-80/img/refs/heads/main/Apk%20(5).png" alt="Alfaham Box">
+            </a>
+            <div class="card-label">Alfaham Box</div>
+        </div>
+
+<div class="card-item">
+            <a href="https://alfahamlive.apk.com" class="card">
+                <img src="https://raw.githubusercontent.com/h-80/img/refs/heads/main/Apk%20(2).png" alt="Alfaham Live">
+            </a>
+            <div class="card-label">Alfaham Live</div>
+        </div>
+
+<div class="card-item">
+            <a href="https://haidertv.apk.com" class="card">
+                <img src="https://raw.githubusercontent.com/h-80/img/refs/heads/main/Apk%20(9).png" alt="HaideTV">
+            </a>
+            <div class="card-label">Haider TV</div>
+        </div>
+
+<div class="card-item">
+            <a href="https://dramalive.apk.com" class="card">
+                <img src="https://raw.githubusercontent.com/h-80/img/refs/heads/main/Apk%20(7).png" alt="Drama Live">
+            </a>
+            <div class="card-label">Drama Live</div>
+        </div>
+
+<div class="card-item">
+            <a href="https://alfahamstore.apk.com" class="card">
+                <img src="https://raw.githubusercontent.com/h-80/img/refs/heads/main/Apk%20(4).png" alt="Alfaham Store">
+            </a>
+            <div class="card-label">Alfaham Store</div>
+        </div>
     </div>
 
 </body>
