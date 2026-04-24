@@ -3,38 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tik Tak - تجربة الأداء</title>
+    <title>Tik Tak - Alfaham</title>
+    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+
     <style>
         :root { --main: #fe2c55; --sub: #25f4ee; }
         body, html { margin: 0; padding: 0; height: 100%; background: #000; color: white; overflow: hidden; font-family: sans-serif; }
         
-        /* التبويبات العلوية */
-        .top-nav { position: absolute; top: 25px; width: 100%; display: flex; justify-content: center; gap: 20px; z-index: 100; font-weight: bold; text-shadow: 2px 2px 5px #000; }
-        .tab.active { border-bottom: 2px solid white; }
+        .top-nav { position: absolute; top: 20px; width: 100%; display: flex; justify-content: center; gap: 20px; z-index: 1000; font-weight: bold; text-shadow: 1px 1px 3px #000; }
+        .tab { cursor: pointer; opacity: 0.6; }
+        .tab.active { opacity: 1; border-bottom: 3px solid white; }
 
-        /* مشغل الفيديوهات */
         .swiper { width: 100%; height: 100vh; }
-        .video-container { position: relative; width: 100%; height: 100%; }
+        .swiper-slide { position: relative; width: 100%; height: 100%; background: #000; }
         video { width: 100%; height: 100%; object-fit: cover; }
 
-        /* أزرار التفاعل الجانبية */
-        .side-bar { position: absolute; right: 12px; bottom: 120px; display: flex; flex-direction: column; align-items: center; gap: 20px; z-index: 50; }
-        .user-avatar { width: 48px; height: 48px; border-radius: 50%; border: 2px solid white; background: #333; }
-        .icon-box { text-align: center; font-size: 25px; cursor: pointer; }
-        .icon-box span { font-size: 12px; display: block; }
+        .side-bar { position: absolute; right: 12px; bottom: 130px; display: flex; flex-direction: column; align-items: center; gap: 20px; z-index: 100; }
+        .icon-btn { font-size: 32px; cursor: pointer; text-align: center; text-shadow: 0 0 5px #000; }
+        .icon-btn span { font-size: 13px; display: block; }
 
-        /* القائمة السفلية */
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; height: 60px; background: #000; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #222; z-index: 100; }
-        .plus-btn { background: linear-gradient(to right, var(--sub), var(--main)); padding: 4px 18px; border-radius: 10px; color: black; font-weight: bold; font-size: 24px; cursor: pointer; }
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; height: 65px; background: #000; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #222; z-index: 1000; }
+        .plus-btn { background: linear-gradient(to right, var(--sub), var(--main)); padding: 4px 20px; border-radius: 10px; color: black; font-weight: bold; font-size: 28px; cursor: pointer; }
         
-        /* تنبيه الرفع */
-        #upload-status { position: fixed; top: 10px; left: 50%; transform: translateX(-50%); background: var(--main); padding: 10px 20px; border-radius: 20px; display: none; z-index: 2000; font-weight: bold; }
+        #loader { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 500; color: var(--sub); }
     </style>
 </head>
 <body>
 
-    <div id="upload-status">جاري الرفع الآن... ⏳</div>
+    <div id="loader">جاري تشغيل تيك تاك... 🎬</div>
 
     <div class="top-nav">
         <div class="tab">اتابعه</div>
@@ -43,96 +44,69 @@
     </div>
 
     <div class="swiper mySwiper">
-        <div class="swiper-wrapper" id="video-feed">
-            </div>
+        <div class="swiper-wrapper" id="feed"></div>
     </div>
 
     <div class="bottom-nav">
-        <div style="color: white;">🏠</div>
+        <div onclick="location.reload()">🏠</div>
         <div>👥</div>
-        <div onclick="document.getElementById('file-up').click()"><span class="plus-btn">+</span></div>
+        <div onclick="document.getElementById('camera').click()"><span class="plus-btn">+</span></div>
         <div>💬</div>
         <div>👤</div>
     </div>
 
-    <input type="file" id="file-up" hidden accept="video/*">
+    <input type="file" id="camera" hidden accept="video/*" capture="camcorder">
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, push, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-        import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
-
-        const firebaseConfig = {
+    <script>
+        var config = {
             apiKey: "AIzaSyANGnbMj4S6xS5Xkl7dSIqTXwqYloy55Mw",
             authDomain: "tik-tak-cdfad.firebaseapp.com",
             databaseURL: "https://tik-tak-cdfad-default-rtdb.asia-southeast1.firebasedatabase.app/",
             projectId: "tik-tak-cdfad",
-            storageBucket: "tik-tak-cdfad.firebasestorage.app",
-            appId: "1:345131210299:web:6acd8e3198b0238f84ee1e"
+            storageBucket: "tik-tak-cdfad.firebasestorage.app"
         };
+        firebase.initializeApp(config);
+        var db = firebase.database();
+        var st = firebase.storage();
 
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-        const storage = getStorage(app);
-
-        // جلب الفيديوهات
-        onValue(ref(db, 'videos'), (snapshot) => {
-            const feed = document.getElementById('video-feed');
-            feed.innerHTML = '';
-            if(!snapshot.exists()) {
-                feed.innerHTML = '<div class="swiper-slide"><div style="display:flex;align-items:center;justify-content:center;height:100%">لا توجد فيديوهات، ارفع أول فيديو الآن! 🎬</div></div>';
-            }
-            snapshot.forEach((child) => {
-                const data = child.val();
-                feed.insertAdjacentHTML('afterbegin', `
-                    <div class="swiper-slide">
-                        <div class="video-container">
-                            <video src="${data.url}" loop playsinline onclick="this.paused?this.play():this.pause()"></video>
+        db.ref('videos').on('value', function(snap) {
+            var feed = document.getElementById('feed');
+            if (snap.exists()) {
+                document.getElementById('loader').style.display = 'none';
+                var content = '';
+                snap.forEach(function(child) {
+                    var v = child.val();
+                    content += `
+                        <div class="swiper-slide">
+                            <video src="${v.url}" loop playsinline onclick="this.paused?this.play():this.pause()"></video>
                             <div class="side-bar">
-                                <div class="user-avatar"></div>
-                                <div class="icon-box">❤️<span>0</span></div>
-                                <div class="icon-box">💬<span>0</span></div>
-                                <div class="icon-box">🔗<span>شارك</span></div>
+                                <div class="icon-btn" onclick="this.style.color='#fe2c55'">❤️<span>0</span></div>
+                                <div class="icon-btn">💬<span>0</span></div>
+                                <div class="icon-btn">🔗</div>
                             </div>
-                            <div style="position:absolute; bottom:80px; left:15px; text-shadow:1px 1px 5px #000;">
-                                <b>@${data.userName || 'مستخدم تيك تاك'}</b>
-                                <p style="font-size:14px; margin-top:5px;">تجربة تطبيق تيك تاك الجديد 🚀</p>
-                            </div>
-                        </div>
-                    </div>`);
-            });
-            new Swiper(".mySwiper", { direction: "vertical" });
+                            <div style="position:absolute; bottom:90px; left:15px; font-weight:bold;">@${v.user || 'حيدر_الفاهم'}</div>
+                        </div>`;
+                });
+                feed.innerHTML = content;
+                new Swiper(".mySwiper", { direction: "vertical" });
+            } else {
+                document.getElementById('loader').innerText = "ارفع فيديو الآن!";
+            }
         });
 
-        // رفع الفيديو بهوية افتراضية للاختبار
-        document.getElementById('file-up').onchange = async (e) => {
-            const file = e.target.files[0];
+        document.getElementById('camera').onchange = function(e) {
+            var file = e.target.files[0];
             if(!file) return;
-            
-            const status = document.getElementById('upload-status');
-            status.style.display = 'block';
-            
-            const storageRef = sRef(storage, 'test_uploads/' + Date.now());
-            
-            try {
-                await uploadBytes(storageRef, file);
-                const url = await getDownloadURL(storageRef);
-                
-                const newVideoRef = push(ref(db, 'videos'));
-                await set(newVideoRef, {
-                    url: url,
-                    userName: "Haider_Tester", // اسم افتراضي للاختبار
-                    timestamp: Date.now()
-                });
-                status.style.display = 'none';
-                alert("تم رفع الفيديو بنجاح! اسحب الشاشة لرؤيته.");
-            } catch (error) {
-                status.style.display = 'none';
-                alert("خطأ في الرفع: تأكد من تفعيل Storage Rules على وضع true");
-                console.error(error);
-            }
+            alert("بدأ الرفع.. انتظر قليلاً ✅");
+            var ref = st.ref().child('v/' + Date.now());
+            ref.put(file).then(function(s) {
+                return s.ref.getDownloadURL();
+            }).then(function(url) {
+                db.ref('videos').push({ url: url, user: "Haider" });
+                alert("تم النشر!");
+                location.reload();
+            });
         };
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 </body>
 </html>
