@@ -3,17 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tik Tak - تيك تاك</title>
+    <title>Tik Tak - تجربة الأداء</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <style>
         :root { --main: #fe2c55; --sub: #25f4ee; }
         body, html { margin: 0; padding: 0; height: 100%; background: #000; color: white; overflow: hidden; font-family: sans-serif; }
         
-        /* شاشة تسجيل الدخول */
-        #login-screen { position: fixed; inset: 0; background: #000; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .g-btn { background: white; color: black; padding: 15px 30px; border-radius: 30px; border: none; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 16px; }
-
-        /* التصميم العلوي */
+        /* التبويبات العلوية */
         .top-nav { position: absolute; top: 25px; width: 100%; display: flex; justify-content: center; gap: 20px; z-index: 100; font-weight: bold; text-shadow: 2px 2px 5px #000; }
         .tab.active { border-bottom: 2px solid white; }
 
@@ -24,24 +20,21 @@
 
         /* أزرار التفاعل الجانبية */
         .side-bar { position: absolute; right: 12px; bottom: 120px; display: flex; flex-direction: column; align-items: center; gap: 20px; z-index: 50; }
-        .user-avatar { width: 48px; height: 48px; border-radius: 50%; border: 2px solid white; }
+        .user-avatar { width: 48px; height: 48px; border-radius: 50%; border: 2px solid white; background: #333; }
         .icon-box { text-align: center; font-size: 25px; cursor: pointer; }
         .icon-box span { font-size: 12px; display: block; }
 
         /* القائمة السفلية */
         .bottom-nav { position: fixed; bottom: 0; width: 100%; height: 60px; background: #000; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #222; z-index: 100; }
         .plus-btn { background: linear-gradient(to right, var(--sub), var(--main)); padding: 4px 18px; border-radius: 10px; color: black; font-weight: bold; font-size: 24px; cursor: pointer; }
+        
+        /* تنبيه الرفع */
+        #upload-status { position: fixed; top: 10px; left: 50%; transform: translateX(-50%); background: var(--main); padding: 10px 20px; border-radius: 20px; display: none; z-index: 2000; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div id="login-screen">
-        <h1 style="font-size: 50px; margin-bottom: 20px; letter-spacing: -2px;">Tik Tak</h1>
-        <button class="g-btn" id="loginBtn">
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20">
-            تسجيل الدخول بالجيميل
-        </button>
-    </div>
+    <div id="upload-status">جاري الرفع الآن... ⏳</div>
 
     <div class="top-nav">
         <div class="tab">اتابعه</div>
@@ -59,18 +52,16 @@
         <div>👥</div>
         <div onclick="document.getElementById('file-up').click()"><span class="plus-btn">+</span></div>
         <div>💬</div>
-        <div onclick="alert('ملفك الشخصي')">👤</div>
+        <div>👤</div>
     </div>
 
     <input type="file" id="file-up" hidden accept="video/*">
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getDatabase, ref, push, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
         import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
-        // إعدادات مشروعك الجديد (Tik Tak Asia)
         const firebaseConfig = {
             apiKey: "AIzaSyANGnbMj4S6xS5Xkl7dSIqTXwqYloy55Mw",
             authDomain: "tik-tak-cdfad.firebaseapp.com",
@@ -81,31 +72,16 @@
         };
 
         const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
         const db = getDatabase(app);
         const storage = getStorage(app);
 
-        // وظيفة تسجيل الدخول
-        document.getElementById('loginBtn').onclick = () => {
-            const provider = new GoogleAuthProvider();
-            signInWithPopup(auth, provider).then(() => {
-                document.getElementById('login-screen').style.display = 'none';
-            }).catch(err => {
-                alert("تأكد من إضافة رابط موقعك في صفحة Authorized Domains داخل Firebase");
-            });
-        };
-
-        // التحقق من حالة المستخدم
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                document.getElementById('login-screen').style.display = 'none';
-            }
-        });
-
-        // جلب وعرض الفيديوهات
+        // جلب الفيديوهات
         onValue(ref(db, 'videos'), (snapshot) => {
             const feed = document.getElementById('video-feed');
             feed.innerHTML = '';
+            if(!snapshot.exists()) {
+                feed.innerHTML = '<div class="swiper-slide"><div style="display:flex;align-items:center;justify-content:center;height:100%">لا توجد فيديوهات، ارفع أول فيديو الآن! 🎬</div></div>';
+            }
             snapshot.forEach((child) => {
                 const data = child.val();
                 feed.insertAdjacentHTML('afterbegin', `
@@ -113,29 +89,30 @@
                         <div class="video-container">
                             <video src="${data.url}" loop playsinline onclick="this.paused?this.play():this.pause()"></video>
                             <div class="side-bar">
-                                <img src="${data.userPhoto || 'https://via.placeholder.com/50'}" class="user-avatar">
+                                <div class="user-avatar"></div>
                                 <div class="icon-box">❤️<span>0</span></div>
                                 <div class="icon-box">💬<span>0</span></div>
                                 <div class="icon-box">🔗<span>شارك</span></div>
                             </div>
                             <div style="position:absolute; bottom:80px; left:15px; text-shadow:1px 1px 5px #000;">
-                                <b>@${data.userName}</b>
-                                <p style="font-size:14px; margin-top:5px;">مرحباً بكم في تيك تاك 🎬</p>
+                                <b>@${data.userName || 'مستخدم تيك تاك'}</b>
+                                <p style="font-size:14px; margin-top:5px;">تجربة تطبيق تيك تاك الجديد 🚀</p>
                             </div>
                         </div>
                     </div>`);
             });
-            // تشغيل مكتبة السحب
             new Swiper(".mySwiper", { direction: "vertical" });
         });
 
-        // رفع الفيديو
+        // رفع الفيديو بهوية افتراضية للاختبار
         document.getElementById('file-up').onchange = async (e) => {
             const file = e.target.files[0];
             if(!file) return;
             
-            alert("بدأ رفع الفيديو، يرجى الانتظار...");
-            const storageRef = sRef(storage, 'uploads/' + Date.now() + '_' + file.name);
+            const status = document.getElementById('upload-status');
+            status.style.display = 'block';
+            
+            const storageRef = sRef(storage, 'test_uploads/' + Date.now());
             
             try {
                 await uploadBytes(storageRef, file);
@@ -144,14 +121,15 @@
                 const newVideoRef = push(ref(db, 'videos'));
                 await set(newVideoRef, {
                     url: url,
-                    userName: auth.currentUser.displayName,
-                    userPhoto: auth.currentUser.photoURL,
-                    userId: auth.currentUser.uid,
+                    userName: "Haider_Tester", // اسم افتراضي للاختبار
                     timestamp: Date.now()
                 });
-                alert("تم النشر بنجاح!");
+                status.style.display = 'none';
+                alert("تم رفع الفيديو بنجاح! اسحب الشاشة لرؤيته.");
             } catch (error) {
-                alert("فشل الرفع: تأكد من تفعيل Storage Rules في Firebase");
+                status.style.display = 'none';
+                alert("خطأ في الرفع: تأكد من تفعيل Storage Rules على وضع true");
+                console.error(error);
             }
         };
     </script>
