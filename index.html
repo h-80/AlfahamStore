@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tik Tak - Final WhatsApp Edition</title>
+    <title>Iraq Chat - عراق شات</title>
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -17,107 +17,153 @@
             --msg-me: #dcf8c6; --msg-them: #ffffff;
         }
 
-        * { font-family: 'Cairo', sans-serif; box-sizing: border-box; }
+        * { font-family: 'Cairo', sans-serif; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body, html { margin: 0; padding: 0; height: 100%; background: var(--bg-light-green); overflow: hidden; }
 
-        /* الهيدر */
-        .main-header { position: sticky; top: 0; background: var(--wa-green); color: #fff; padding: 15px; display: flex; align-items: center; justify-content: center; z-index: 1000; }
-        .main-header h1 { margin: 0; font-size: 20px; font-weight: 900; }
+        /* شاشة الدخول */
+        #auth-screen { display: none; height: 100vh; flex-direction: column; align-items: center; justify-content: center; background: #fff; padding: 25px; }
+        .auth-in { width: 100%; max-width: 320px; padding: 14px; margin-bottom: 10px; border-radius: 12px; border: 1px solid #ddd; outline: none; }
+        .btn-auth { width: 100%; max-width: 320px; padding: 15px; background: #000; color: #fff; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; }
+        .btn-google { width: 100%; max-width: 320px; padding: 12px; background: #fff; border: 1px solid #ddd; border-radius: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; margin-top: 10px; }
 
-        /* واجهة الأقسام */
-        #lobby-screen { display: none; height: 100vh; overflow-y: auto; padding-bottom: 80px; }
+        /* الواجهة الرئيسية */
+        .main-header { position: sticky; top: 0; background: var(--wa-green); color: #fff; padding: 15px; text-align: center; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        #lobby-screen { display: none; height: 100vh; overflow-y: auto; padding-bottom: 30px; }
         .rooms-container { padding: 15px; }
+
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin: 20px 5px 12px; }
+        .section-title { font-size: 16px; font-weight: 800; color: #444; border-right: 4px solid var(--wa-action); padding-right: 10px; margin: 0; }
+        
+        .btn-add-room {
+            background: var(--wa-action); color: #fff; border: none; 
+            padding: 6px 14px; border-radius: 20px; 
+            font-size: 13px; font-weight: 700; cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 5px;
+        }
+
         .room-card { 
             background: #fff; border-radius: 18px; padding: 18px; margin-bottom: 12px; 
             display: flex; justify-content: space-between; align-items: center; 
             border-right: 6px solid var(--tt-red); box-shadow: 0 4px 12px rgba(0,0,0,0.03); cursor: pointer; 
+            height: 85px; 
         }
         .room-fixed { border-right-color: #2ecc71; background: #f9fffb; }
-        .online-tag { background: #e8f5e9; color: #2e7d32; padding: 4px 12px; border-radius: 12px; font-size: 11px; font-weight: 700; }
+        
+        .room-info { flex: 1; display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
+        .room-name { font-weight: 800; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .room-owner { color: #888; font-size: 12px; margin-top: 2px; }
+
+        .room-actions { display: flex; align-items: center; gap: 10px; }
+        .online-tag { background: #e8f5e9; color: #2e7d32; padding: 4px 12px; border-radius: 12px; font-size: 13px; font-weight: 700; }
+        .delete-room-btn { color: #ff4d4d; font-size: 22px; cursor: pointer; }
+
+        /* تصميم النوافذ المنبثقة (Modal) */
+        .modal-overlay { 
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.5); z-index: 3000; align-items: center; justify-content: center; padding: 20px;
+        }
+        .modal-card { 
+            background: #fff; width: 100%; max-width: 350px; border-radius: 20px; padding: 25px; 
+            text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); 
+        }
+        .modal-input { width: 100%; padding: 12px; margin: 15px 0; border-radius: 10px; border: 1px solid #ddd; outline: none; text-align: center; font-weight: 600; }
+        .modal-btns { display: flex; gap: 10px; margin-top: 15px; }
+        .btn-m { flex: 1; padding: 12px; border-radius: 10px; border: none; font-weight: 700; cursor: pointer; }
+        .btn-confirm { background: var(--wa-action); color: #fff; }
+        .btn-delete { background: var(--tt-red); color: #fff; }
+        .btn-cancel { background: #eee; color: #555; }
 
         /* واجهة الدردشة */
         #chat-screen { display: none; height: 100vh; flex-direction: column; background: #e5ddd5; background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); }
-        .chat-header { background: var(--wa-green); color: #fff; padding: 12px 18px; display: flex; align-items: center; gap: 15px; }
+        .chat-header { background: var(--wa-green); color: #fff; padding: 15px; text-align: center; font-weight: 800; }
         #msg-container { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 6px; }
         
-        /* الفقاعات */
-        .bubble { max-width: 80%; padding: 10px 15px; font-size: 19px; position: relative; line-height: 1.4; font-weight: 600; border-radius: 15px; box-shadow: 0 1px 1px rgba(0,0,0,0.1); }
+        .bubble { max-width: 85%; padding: 8px 12px; font-size: 16px; font-weight: 600; border-radius: 15px; }
         .bubble.me { align-self: flex-end; background: var(--msg-me); border-bottom-right-radius: 2px; }
         .bubble.them { align-self: flex-start; background: var(--msg-them); border-bottom-left-radius: 2px; }
-        .sticker-msg { font-size: 55px; background: none !important; border: none !important; box-shadow: none !important; }
+        .sticker-msg { font-size: 38px; background: none !important; box-shadow: none !important; }
 
-        /* شريط الإدخال (واتساب) */
-        .input-bar { padding: 8px; display: flex; align-items: center; gap: 8px; background: transparent; }
-        .input-wrapper { background: #fff; flex: 1; border-radius: 25px; padding: 5px 15px; display: flex; align-items: center; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
-        #m-in { flex: 1; border: none; padding: 10px 0; outline: none; font-size: 18px; font-weight: 600; }
-        .emoji-btn { color: #85959f; font-size: 24px; cursor: pointer; padding-left: 10px; }
-        
-        /* زر إرسال واتساب المطور */
-        .btn-send { 
-            background: var(--wa-action); color: #fff; border: none; 
-            width: 50px; height: 50px; border-radius: 50%; 
-            display: flex; align-items: center; justify-content: center; 
-            cursor: pointer; flex-shrink: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-        }
+        .input-bar { padding: 10px; display: flex; align-items: center; gap: 8px; }
+        .input-wrapper { background: #fff; flex: 1; border-radius: 25px; padding: 5px 15px; display: flex; align-items: center; min-height: 48px; }
+        #m-in { flex: 1; border: none; outline: none; font-size: 17px; background: transparent; }
+        .btn-send { background: var(--wa-action); border: none; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
 
-        #sticker-panel { 
-            display: none; background: #fff; height: 220px; overflow-y: auto; 
-            padding: 15px; grid-template-columns: repeat(4, 1fr); gap: 15px; 
-            border-top: 1px solid #ddd; text-align: center;
-        }
-        .sticker-item { font-size: 40px; cursor: pointer; }
-
-        #auth-screen { display: flex; height: 100vh; flex-direction: column; align-items: center; justify-content: center; background: #fff; padding: 25px; }
-        .auth-in { width: 100%; max-width: 320px; padding: 15px; margin-bottom: 10px; border-radius: 12px; border: 1px solid #ddd; outline: none; }
-        .hidden { display: none !important; }
+        #sticker-panel { display: none; background: #f0f0f0; height: 210px; overflow-y: auto; padding: 10px; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+        .sticker-item { font-size: 32px; cursor: pointer; text-align: center; }
     </style>
 </head>
 <body>
 
+    <div id="modal-create" class="modal-overlay">
+        <div class="modal-card">
+            <h3 style="margin:0">إنشاء غرفة جديدة</h3>
+            <input type="text" id="new-room-name-input" class="modal-input" placeholder="اكتب اسم الغرفة هنا..." maxlength="25">
+            <div class="modal-btns">
+                <button class="btn-m btn-confirm" onclick="confirmCreateRoom()">إنشاء</button>
+                <button class="btn-m btn-cancel" onclick="hideModal('modal-create')">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-delete" class="modal-overlay">
+        <div class="modal-card">
+            <h3 style="margin:0; color: var(--tt-red);">حذف الغرفة</h3>
+            <p style="font-weight: 600; color: #666; margin: 15px 0;">هل أنت متأكد من حذف هذه الغرفة نهائياً؟</p>
+            <div class="modal-btns">
+                <button class="btn-m btn-delete" onclick="confirmDeleteRoom()">حذف</button>
+                <button class="btn-m btn-cancel" onclick="hideModal('modal-delete')">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
     <div id="auth-screen">
-        <h1 style="font-size: 40px; font-weight: 900; color: #000; margin-bottom: 30px;">Tik Tak</h1>
+        <h1 style="font-weight: 900; font-size: 45px; margin-bottom: 25px;">عراق شات - Iraq Chat</h1>
         <input type="email" id="u-email" placeholder="البريد الإلكتروني" class="auth-in">
         <input type="password" id="u-pass" placeholder="كلمة المرور" class="auth-in">
-        <button onclick="manualAuth()" style="width:100%; max-width:320px; padding:16px; background:#000; color:#fff; border:none; border-radius:12px; font-weight:700; font-size:18px;">دخول</button>
+        <button onclick="manualAuth()" class="btn-auth">دخول</button>
+        <button onclick="googleAuth()" class="btn-google">
+            <img src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png" width="18"> الدخول بواسطة جوجل
+        </button>
     </div>
 
     <div id="lobby-screen">
-        <div class="main-header"><h1>Tik Tak</h1></div>
-        <div class="rooms-container" id="rooms-list"></div>
-        <div style="padding: 0 15px 30px;">
-            <button onclick="createRoom()" style="width:100%; padding:15px; border:2px dashed #88b49e; background:#fff; border-radius:18px; font-weight:700; color:#55866c;">+ إنشاء غرفة دردشة جديدة</button>
+        <div class="main-header"><h1 style="margin:0; font-size:22px; font-weight: 900;">عراق شات - Iraq Chat</h1></div>
+        <div class="rooms-container">
+            <div class="section-header">
+                <h2 class="section-title">غرف الدردشة الرئيسية</h2>
+                <button class="btn-add-room" onclick="showModal('modal-create')"><span>+</span> إنشاء غرفة</button>
+            </div>
+            <div id="fixed-rooms"></div>
+            
+            <div class="section-header">
+                <h2 class="section-title">غرف المستخدمين</h2>
+            </div>
+            <div id="user-rooms"></div>
         </div>
     </div>
 
     <div id="chat-screen">
-        <div class="chat-header">
-            <span onclick="goBackManual()" style="cursor:pointer; font-size:22px;">🔙</span>
-            <div style="flex:1;">
-                <div id="active-room-name" style="font-weight:700; font-size: 18px;">...</div>
-                <div id="active-online" style="font-size:11px; opacity: 0.9;">0 متصل</div>
-            </div>
-        </div>
-        
+        <div class="chat-header"><div id="active-room-name" style="font-size: 19px;">...</div></div>
         <div id="msg-container"></div>
-
         <div id="sticker-panel">
             <span class="sticker-item" onclick="sendSticker('😂')">😂</span>
             <span class="sticker-item" onclick="sendSticker('😍')">😍</span>
+            <span class="sticker-item" onclick="sendSticker('❤️')">❤️</span>
             <span class="sticker-item" onclick="sendSticker('🌹')">🌹</span>
             <span class="sticker-item" onclick="sendSticker('👍')">👍</span>
-            <span class="sticker-item" onclick="sendSticker('❤️')">❤️</span>
             <span class="sticker-item" onclick="sendSticker('🇮🇶')">🇮🇶</span>
-            <span class="sticker-item" onclick="sendSticker('🤣')">🤣</span>
             <span class="sticker-item" onclick="sendSticker('🔥')">🔥</span>
+            <span class="sticker-item" onclick="sendSticker('🤣')">🤣</span>
+            <span class="sticker-item" onclick="sendSticker('😎')">😎</span>
+            <span class="sticker-item" onclick="sendSticker('✨')">✨</span>
         </div>
-
         <div class="input-bar">
             <div class="input-wrapper">
-                <span class="emoji-btn" onclick="toggleStickers()">😊</span>
+                <span onclick="toggleStickers()" style="cursor:pointer; font-size:24px; padding-left:10px;">😊</span>
                 <input type="text" id="m-in" placeholder="اكتب رسالتك..." autocomplete="off">
             </div>
             <button class="btn-send" onclick="sendText()">
-                <svg viewBox="0 0 24 24" width="28" height="28" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>
             </button>
         </div>
     </div>
@@ -128,49 +174,84 @@
         const auth = firebase.auth(), db = firebase.database();
 
         let currentRoomId = "";
+        let roomToDeleteId = ""; // لتخزين معرف الغرفة المراد حذفها
 
-        // نظام الرجوع الذكي
         function setView(view) {
+            if (auth.currentUser && view === 'auth') view = 'lobby';
             document.getElementById('auth-screen').style.display = view === 'auth' ? 'flex' : 'none';
             document.getElementById('lobby-screen').style.display = view === 'lobby' ? 'block' : 'none';
             document.getElementById('chat-screen').style.display = view === 'chat' ? 'flex' : 'none';
-            if (history.state?.view !== view) history.pushState({view: view}, "");
+            if (view === 'chat') history.pushState({view: 'chat'}, "");
+            else history.replaceState({view: 'lobby'}, "");
         }
 
-        window.onpopstate = (e) => { if(e.state?.view) setView(e.state.view); };
+        window.onpopstate = function() {
+            if (auth.currentUser) {
+                if (currentRoomId) exitChatUI();
+                else history.pushState({view: 'lobby'}, "");
+            } else setView('auth');
+        };
 
-        auth.onAuthStateChanged(user => { if(user) { setView('lobby'); renderRooms(); } else setView('auth'); });
+        auth.onAuthStateChanged(user => { if(user) { setView('lobby'); listenToRooms(); } else { setView('auth'); } });
 
-        function manualAuth() { auth.signInWithEmailAndPassword(document.getElementById('u-email').value, document.getElementById('u-pass').value).catch(e => alert("خطأ في الدخول")); }
+        function googleAuth() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
+        function manualAuth() { 
+            const e = document.getElementById('u-email').value, p = document.getElementById('u-pass').value;
+            if(e && p) auth.signInWithEmailAndPassword(e, p);
+        }
 
-        function renderRooms() {
-            const mainRooms = [
-                {id:'iraq_1', name:'🇮🇶 شات العراق العام'},
-                {id:'heiba_2', name:'👑 مضافة الهيبة'},
-                {id:'games_3', name:'🔥 قسم المسابقات'},
-                {id:'talk_4', name:'☕ سوالف وتعاريف'},
-                {id:'help_5', name:'🛡️ قسم المساعدة'}
-            ];
-            const list = document.getElementById('rooms-list'); list.innerHTML = "";
-            mainRooms.forEach(r => {
-                list.innerHTML += `<div class="room-card room-fixed" onclick="joinRoom('${r.id}', '${r.name}')"><div><b>${r.name}</b><br><small>رسمي</small></div><span class="online-tag" id="cnt-${r.id}">0 متصل</span></div>`;
-                db.ref('presence/'+r.id).on('value', s => { if(document.getElementById('cnt-'+r.id)) document.getElementById('cnt-'+r.id).innerText = (s.numChildren()||0) + " متصل"; });
+        // وظائف النوافذ (Modals)
+        function showModal(id) { document.getElementById(id).style.display = 'flex'; if(id==='modal-create') document.getElementById('new-room-name-input').focus(); }
+        function hideModal(id) { document.getElementById(id).style.display = 'none'; if(id==='modal-create') document.getElementById('new-room-name-input').value = ''; }
+
+        function confirmCreateRoom() {
+            const name = document.getElementById('new-room-name-input').value;
+            if(name && name.trim().length > 2) {
+                db.ref('rooms_meta').push({ name: name.trim(), creator: auth.currentUser.displayName || "مستخدم", uid: auth.currentUser.uid });
+                hideModal('modal-create');
+            }
+        }
+
+        function showDeletePrompt(id) { roomToDeleteId = id; showModal('modal-delete'); }
+        function confirmDeleteRoom() {
+            if(roomToDeleteId) {
+                db.ref('rooms_meta/' + roomToDeleteId).remove();
+                db.ref('chats/' + roomToDeleteId).remove();
+                hideModal('modal-delete');
+                roomToDeleteId = "";
+            }
+        }
+
+        function listenToRooms() {
+            const fixed = [{id:'iraq_gen', name:'🇮🇶 شات العراق العام'},{id:'heiba_vip', name:'👑 مضافة الهيبة'},{id:'games_fun', name:'🔥 قسم المسابقات'}];
+            const fixedBox = document.getElementById('fixed-rooms'); fixedBox.innerHTML = "";
+            fixed.forEach(r => {
+                fixedBox.innerHTML += `
+                    <div class="room-card room-fixed" onclick="joinRoom('${r.id}', '${r.name}')">
+                        <div class="room-info"><div class="room-name">${r.name}</div></div>
+                        <div class="room-actions"><span class="online-tag" id="cnt-${r.id}">0</span></div>
+                    </div>`;
+                db.ref('presence/'+r.id).on('value', s => { if(document.getElementById('cnt-'+r.id)) document.getElementById('cnt-'+r.id).innerText = s.numChildren() || 0; });
             });
+
             db.ref('rooms_meta').on('value', snap => {
+                const userBox = document.getElementById('user-rooms'); userBox.innerHTML = "";
                 snap.forEach(c => {
-                    const r = c.val();
-                    list.innerHTML += `<div class="room-card" onclick="joinRoom('${c.key}', '${r.name}')"><div><b>${r.name}</b><br><small>بواسطة: ${r.creator}</small></div><span class="online-tag">نشط</span></div>`;
+                    const r = c.val(), isOwner = r.uid === auth.currentUser.uid;
+                    userBox.innerHTML += `
+                        <div class="room-card">
+                            <div class="room-info" onclick="joinRoom('${c.key}', '${r.name}')">
+                                <div class="room-name">${r.name}</div>
+                                <div class="room-owner">بواسطة: ${r.creator}</div>
+                            </div>
+                            <div class="room-actions">
+                                <span class="online-tag" id="cnt-${c.key}">0</span>
+                                ${isOwner ? `<span class="delete-room-btn" onclick="showDeletePrompt('${c.key}')">🗑️</span>` : ''}
+                            </div>
+                        </div>`;
+                    db.ref('presence/'+c.key).on('value', s => { if(document.getElementById('cnt-'+c.key)) document.getElementById('cnt-'+c.key).innerText = s.numChildren() || 0; });
                 });
             });
-        }
-
-        function toggleStickers() { const p = document.getElementById('sticker-panel'); p.style.display = p.style.display === 'grid' ? 'none' : 'grid'; }
-
-        function sendSticker(s) {
-            if(currentRoomId) {
-                db.ref('chats/'+currentRoomId).push({ u: auth.currentUser.displayName || "مستخدم", uid: auth.currentUser.uid, m: s, type: 'sticker' });
-                toggleStickers();
-            }
         }
 
         function joinRoom(id, name) {
@@ -178,21 +259,30 @@
             document.getElementById('active-room-name').innerText = name;
             db.ref('presence/'+id+'/'+auth.currentUser.uid).set(true);
             db.ref('presence/'+id+'/'+auth.currentUser.uid).onDisconnect().remove();
-            setView('chat');
-            loadMsgs();
+            setView('chat'); loadMsgs();
         }
 
-        function goBackManual() { 
+        function exitChatUI() {
             if(currentRoomId) db.ref('presence/'+currentRoomId+'/'+auth.currentUser.uid).remove();
-            currentRoomId = ""; 
-            setView('lobby'); 
+            currentRoomId = "";
+            document.getElementById('lobby-screen').style.display = 'block';
+            document.getElementById('chat-screen').style.display = 'none';
         }
 
+        function toggleStickers() { const p = document.getElementById('sticker-panel'); p.style.display = p.style.display === 'grid' ? 'none' : 'grid'; }
+        
         function sendText() {
             const i = document.getElementById('m-in');
             if(i.value.trim() && currentRoomId) {
                 db.ref('chats/'+currentRoomId).push({ u: auth.currentUser.displayName || "مستخدم", uid: auth.currentUser.uid, m: i.value, type: 'text' });
                 i.value = "";
+            }
+        }
+
+        function sendSticker(s) {
+            if(currentRoomId) {
+                db.ref('chats/'+currentRoomId).push({ u: auth.currentUser.displayName || "مستخدم", uid: auth.currentUser.uid, m: s, type: 'sticker' });
+                toggleStickers();
             }
         }
 
@@ -202,13 +292,11 @@
                 snap.forEach(c => {
                     const d = c.val(), isMe = d.uid === auth.currentUser.uid;
                     const isSticker = d.type === 'sticker';
-                    box.innerHTML += `<div class="bubble ${isMe?'me':'them'} ${isSticker?'sticker-msg':''}">${!isMe && !isSticker ? `<small style="display:block;color:#3498db">${d.u}</small>` : ''}${d.m}</div>`;
+                    box.innerHTML += `<div class="bubble ${isMe?'me':'them'} ${isSticker?'sticker-msg':''}">${!isMe && !isSticker ? `<small style="color:#3498db;display:block;font-size:11px">${d.u}</small>` : ''}${d.m}</div>`;
                 });
                 box.scrollTop = box.scrollHeight;
             });
         }
-
-        function createRoom() { const n = prompt("اسم الغرفة:"); if(n) db.ref('rooms_meta').push({ name: n, creator: auth.currentUser.displayName || "مستخدم", uid: auth.currentUser.uid }); }
     </script>
 </body>
 </html>
