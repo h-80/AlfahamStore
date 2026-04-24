@@ -3,48 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>مشغل القنوات</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>ALFAHAM PLAYER - REMOTE FIX</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        *{margin:0;padding:0;box-sizing:border-box;}
-        body{background:black;font-family:'Cairo',sans-serif;color:white;height:100vh;display:flex;flex-direction:column;overflow:hidden;}
-        .player-container{width:100%;background:black;flex-shrink:0;aspect-ratio:16/9;position:relative;}
-        video, #youtubeIframe{width:100%;height:100%;background:black;outline:none;border:none;}
+        *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+        body{background:black;font-family:'Cairo',sans-serif;color:white;height:100vh;overflow:hidden;user-select:none;}
+        .main-wrapper { position: relative; width: 100vw; height: 100vh; background: black; cursor: pointer; }
+        video, #youtubeIframe { width: 100%; height: 100%; pointer-events: none; z-index: 1; }
         
-        .channels-container{background:#1a1a1a;flex-grow:1;padding:8px;overflow-y:auto;}
-        .channels-grid{display:flex;flex-direction:column;gap:4px;}
+        .side-menu {
+            position: fixed; top: 0; right: -280px; width: 260px; height: 100vh;
+            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(15px);
+            z-index: 2000; padding: 10px; transition: 0.4s ease;
+            overflow-y: auto; border-left: 1px solid rgba(255,255,255,0.1); outline: none;
+        }
+        .side-menu.active { transform: translateX(-280px); }
         
-        .channel-card{background:#2a2a2a;border-radius:6px;padding:8px 12px;cursor:pointer;border:1px solid #3a3a3a;color:white;font-size:14px;text-align:right;display:flex;align-items:center;gap:8px;}
-        .channel-number{display:inline-flex;align-items:center;justify-content:center;background:#444;color:#fff;font-size:12px;font-weight:600;width:22px;height:22px;border-radius:4px;flex-shrink:0;}
-        .channel-card:hover{background:#3a3a3a;}
-        .channel-card.active{border-right:3px solid white;background:#3a3a3a;}
-        .channel-card.active .channel-number{background:#e74c3c;}
-        .channel-name{flex:1;}
+        .channel-card {
+            background: rgba(255, 255, 255, 0.05); margin-bottom: 6px;
+            padding: 8px 12px; border-radius: 6px; display: flex;
+            align-items: center; gap: 12px; cursor: pointer;
+            border: 2px solid transparent; outline: none; transition: 0.2s;
+        }
+        .channel-card:focus, .channel-card:hover { background: #2a2a2a; border-color: #444; }
+        .channel-card.active { border-color: #e74c3c; background: rgba(255, 255, 255, 0.08); }
+        .channel-card.active .ch-num { background: #e74c3c !important; color: white !important; }
+        
+        .ch-num {
+            background: rgba(255,255,255,0.1); width: 30px; height: 30px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 4px; font-size: 13px; font-weight: bold; color: #ccc;
+        }
+        .ch-name { font-size: 14px; font-weight: 600; }
 
-        .quality-hq-btn {position: absolute;bottom: 65px;right: 10px;background: rgba(0,0,0,0.4);color: white;border: 1px solid rgba(255,255,255,0.1);border-radius: 4px;padding: 5px 12px;font-size: 12px;cursor: pointer;z-index: 1000;display: none;transition: opacity 0.3s;}
-        
-        #qualityMenu {position: absolute;bottom: 65px;right: 65px;background: rgba(0,0,0,0.7);border: 1px solid rgba(255,255,255,0.1);border-radius: 4px;display: none;z-index: 1000;min-width: 70px;}
-        .quality-option {padding: 8px 12px;cursor: pointer;font-size: 12px;text-align: center;border-bottom: 1px solid rgba(255,255,255,0.1);display: flex;align-items: center;justify-content: center;gap: 5px;}
-        .quality-option:hover {background: rgba(255,255,255,0.2);}
-        
-        .dot {width: 6px;height: 6px;background: #e74c3c;border-radius: 50%;display: none;}
-        .quality-option.selected .dot {display: block;}
+        .quality-hq-btn {
+            position: absolute; bottom: 30px; left: 30px;
+            background: rgba(255,255,255,0.1); color: white;
+            border: 1px solid rgba(255,255,255,0.2); border-radius: 50px;
+            padding: 8px 20px; z-index: 2001; display: none; cursor: pointer;
+            outline: none; font-weight: bold;
+        }
+        .quality-hq-btn:focus { background: #e74c3c; border-color: white; transform: scale(1.1); }
+
+        .quality-dropdown {
+            position: absolute; bottom: 80px; left: 30px;
+            background: rgba(0,0,0,0.95); border: 1px solid #444;
+            border-radius: 8px; display: none; z-index: 2002; min-width: 120px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5); outline: none;
+        }
+        .q-option {
+            padding: 12px 20px; cursor: pointer; text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 13px;
+            outline: none; transition: 0.2s;
+        }
+        .q-option:focus, .q-option:hover { background: #e74c3c; color: white; }
+
+        #touch-fixer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; background: transparent; display: none; }
     </style>
 </head>
-<body onmousemove="showControls()" ontouchstart="showControls()">
-    <div class="player-container" id="playerContainer">
-        <video id="video" playsinline controls crossorigin="anonymous"></video>
-        <button class="quality-hq-btn" id="qualityHqBtn">HQ</button>
-        <div id="qualityMenu"></div>
-    </div>
-    <div class="channels-container">
-        <div class="channels-grid" id="channelsList"></div>
+<body>
+
+    <div class="main-wrapper" id="main" onclick="toggleUI(event)">
+        <div id="touch-fixer"></div>
+        <video id="video" playsinline crossorigin="anonymous"></video>
+        <button class="quality-hq-btn" id="qBtn" tabindex="0">HQ</button>
+        <div class="quality-dropdown" id="qMenu" tabindex="0"></div>
+        <div class="side-menu" id="menu" tabindex="0" onclick="event.stopPropagation()">
+            <div id="list"></div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script>
-        // جميع القنوات المضافة
-        const channelsData = `
+        const rawChannels = `
+
 قناة كربلاء الفضائية
 https://www.youtube.com/watch?v=nxnEqSPRS68
 كربلاء القران الكريم
@@ -280,7 +312,6 @@ https://w.shahidtv.net/live/34682514/73347194/62.m3u8
 كارتون نت بالعربية
 https://w.shahidtv.net/live/34682514/73347194/83.m3u8
 
-
 الجزيرة
 https://live-hls-web-aja.getaj.net/AJA/03.m3u8
 الجزيرة مباشر
@@ -305,6 +336,7 @@ https://rt-arb.rttv.com/dvr/rtarab/playlist_1600Kb.m3u8
 https://live2.alalam.ir/live/Alalam/index.m3u8
 i24news
 https://i24newsarabic-cdn.encoders.immergo.tv/0/streamPlaylist.m3u8
+
 
 كربلاء الوثائقية
 https://ktvlive.online/stream/hls/ch3.m3u8
@@ -496,7 +528,7 @@ FIFA +
 https://a62dad94.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/UmFrdXRlblRWLWV1X0ZJRkFQbHVzRW5nbGlzaF9ITFM/playlist.m3u8
 
 
-القران الكريالقران الكريم
+القران الكريم
 https://www.youtube.com/watch?v=afw9SYnqGPs
 الرقية الشرعية
 https://www.youtube.com/watch?v=m4X6MlPLDWY
@@ -663,59 +695,112 @@ https://www.youtube.com/watch?v=-sYJohmxTsE
 https://www.youtube.com/watch?v=5zkcrzlN10o
 
 
+
 `;
 
-        const playerContainer = document.getElementById('playerContainer');
         const video = document.getElementById('video');
-        const list = document.getElementById('channelsList');
-        const qualityBtn = document.getElementById('qualityHqBtn');
-        const qualityMenu = document.getElementById('qualityMenu');
-        let hls = null;
-        let hideTimeout;
+        const menu = document.getElementById('menu');
+        const qBtn = document.getElementById('qBtn');
+        const qMenu = document.getElementById('qMenu');
+        const touchFixer = document.getElementById('touch-fixer');
+        let hls = null, isHQ = false, hideTimer = null, currentActiveCard = null;
 
-        function getYouTubeID(url) {
-            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-            const match = url.match(regExp);
-            return (match && match[2].length === 11) ? match[2] : null;
+        function killTimer() { if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; } }
+        function startHideTimer() { killTimer(); hideTimer = setTimeout(() => { closeUI(); }, 5000); }
+        function toggleUI(e) { menu.classList.contains('active') ? closeUI() : openUI(); }
+
+        function openUI() {
+            menu.classList.add('active');
+            if (currentActiveCard) {
+                currentActiveCard.focus();
+                currentActiveCard.scrollIntoView({ block: "center" });
+            } else { menu.focus(); }
+            if (isHQ) qBtn.style.display = 'block';
         }
 
-        function showControls() {
-            if (qualityBtn.style.display !== 'none') {
-                qualityBtn.style.opacity = '1';
-                clearTimeout(hideTimeout);
-                hideTimeout = setTimeout(() => { qualityBtn.style.opacity = '0'; }, 3000);
+        function closeUI() {
+            menu.classList.remove('active');
+            qBtn.style.display = 'none';
+            qMenu.style.display = 'none';
+            killTimer();
+        }
+
+        menu.addEventListener('mouseenter', killTimer);
+        menu.addEventListener('mousemove', killTimer);
+        menu.addEventListener('wheel', killTimer);
+        menu.addEventListener('mouseleave', () => { if (menu.classList.contains('active')) startHideTimer(); });
+
+        // إدارة التحكم بالريموت
+        document.addEventListener('keydown', (e) => {
+            const isMenuOpen = menu.classList.contains('active');
+            const isQOpen = qMenu.style.display === 'block';
+
+            if (!isMenuOpen && !isQOpen) {
+                if (["Enter", "ArrowUp", "ArrowDown", " "].includes(e.key)) openUI();
+                return;
             }
-        }
+            
+            killTimer();
 
-        function playChannel(url, card) {
+            // التحكم داخل قائمة الجودات
+            if (isQOpen) {
+                const qItems = Array.from(qMenu.querySelectorAll('.q-option'));
+                let qIndex = qItems.indexOf(document.activeElement);
+
+                if (e.key === "ArrowDown") { e.preventDefault(); (qItems[qIndex + 1] || qItems[0]).focus(); }
+                else if (e.key === "ArrowUp") { e.preventDefault(); (qItems[qIndex - 1] || qItems[qItems.length - 1]).focus(); }
+                else if (["Escape", "Back", "BrowserBack", "ArrowRight"].includes(e.key)) { 
+                    e.preventDefault(); qMenu.style.display = 'none'; qBtn.focus(); 
+                }
+                return;
+            }
+
+            // الانتقال لزر HQ بالريموت (سهم يسار)
+            if (isHQ && e.key === "ArrowLeft" && document.activeElement !== qBtn) {
+                e.preventDefault();
+                qBtn.focus();
+                return;
+            }
+
+            // التحكم في القائمة الرئيسية
+            const items = Array.from(document.querySelectorAll('.channel-card'));
+            let index = items.indexOf(document.activeElement);
+
+            if (e.key === "ArrowDown") { e.preventDefault(); (items[index + 1] || items[0]).focus(); }
+            else if (e.key === "ArrowUp") { e.preventDefault(); (items[index - 1] || items[items.length - 1]).focus(); }
+            else if (e.key === "ArrowRight" && document.activeElement === qBtn) { e.preventDefault(); items[0].focus(); }
+            else if (["Escape", "Back", "BrowserBack"].includes(e.key)) closeUI();
+        });
+
+        function play(url, card) {
             if (hls) { hls.destroy(); hls = null; }
-            qualityMenu.style.display = 'none';
-            qualityBtn.style.display = 'none';
-            const existingIframe = document.getElementById('youtubeIframe');
-            if (existingIframe) existingIframe.remove();
-
-            document.querySelectorAll('.channel-card').forEach(e => e.classList.remove('active'));
+            const oldYT = document.getElementById('youtubeIframe');
+            if (oldYT) oldYT.remove();
+            isHQ = false; qBtn.style.display = 'none'; qMenu.style.display = 'none'; touchFixer.style.display = 'none';
+            document.querySelectorAll('.channel-card').forEach(c => c.classList.remove('active'));
             card.classList.add('active');
+            currentActiveCard = card;
+            startHideTimer();
 
-            const youtubeID = getYouTubeID(url);
-
-            if (youtubeID) {
-                video.style.display = 'none';
-                const iframe = document.createElement('iframe');
-                iframe.id = 'youtubeIframe';
-                iframe.allow = "autoplay; encrypted-media; picture-in-picture; fullscreen";
-                iframe.src = `https://www.youtube.com/embed/${youtubeID}?autoplay=1&playsinline=1`;
-                playerContainer.appendChild(iframe);
+            if (url.includes('youtube.com') || url.includes('watch?v=')) {
+                video.style.display = 'none'; touchFixer.style.display = 'block';
+                const ifr = document.createElement('iframe');
+                ifr.id = 'youtubeIframe';
+                const id = url.split('v=')[1]?.split('&')[0];
+                ifr.src = `https://www.youtube.com/embed/${id}?autoplay=1&rel=0`;
+                ifr.allow = "autoplay; fullscreen";
+                ifr.style.cssText = "width:100%; height:100%; border:none; position:absolute; top:0; left:0; z-index:1;";
+                document.getElementById('main').appendChild(ifr);
             } else {
                 video.style.display = 'block';
-                if (Hls.isSupported() && url.includes('.m3u8')) {
-                    hls = new Hls({xhrSetup: (xhr) => {xhr.setRequestHeader('Referer', 'https://www.google.com/');}});
-                    hls.loadSource(url);
-                    hls.attachMedia(video);
-                    hls.on(Hls.Events.MANIFEST_PARSED, (e, data) => {
-                        if (data.levels.length > 1) {
-                            qualityBtn.style.display = 'block';
-                            updateQualityMenu(hls, hls.currentLevel);
+                if (Hls.isSupported()) {
+                    hls = new Hls({ enableWorker: true, maxBufferLength: 10 });
+                    hls.loadSource(url); hls.attachMedia(video);
+                    hls.on(Hls.Events.MANIFEST_PARSED, (e, d) => {
+                        if (d.levels.length > 1) {
+                            isHQ = true;
+                            if(menu.classList.contains('active')) qBtn.style.display = 'block';
+                            buildQ(d.levels);
                         }
                         video.play().catch(()=>{});
                     });
@@ -723,36 +808,59 @@ https://www.youtube.com/watch?v=5zkcrzlN10o
             }
         }
 
-        function updateQualityMenu(hlsInstance, selectedIndex) {
-            qualityMenu.innerHTML = '';
-            hlsInstance.levels.forEach((level, index) => {
-                const opt = document.createElement('div');
-                opt.className = 'quality-option' + (index === selectedIndex ? ' selected' : '');
-                opt.innerHTML = `<span class="dot"></span> ${level.height}p`;
-                opt.onclick = () => {
-                    hlsInstance.currentLevel = index;
-                    updateQualityMenu(hlsInstance, index);
-                    qualityMenu.style.display = 'none';
+        function buildQ(lvls) {
+            qMenu.innerHTML = '';
+            const opts = [{name: 'تلقائي', id: -1}, ...lvls.map((l, i) => ({name: l.height + 'p', id: i}))];
+            opts.forEach(opt => {
+                const o = document.createElement('div');
+                o.className = 'q-option';
+                o.tabIndex = 0;
+                o.innerText = opt.name;
+                const selectFn = (e) => {
+                    e.stopPropagation();
+                    hls.currentLevel = opt.id;
+                    qMenu.style.display = 'none';
+                    startHideTimer();
                 };
-                qualityMenu.appendChild(opt);
+                o.onclick = selectFn;
+                o.onkeydown = (e) => { if(e.key === "Enter") selectFn(e); };
+                qMenu.appendChild(o);
             });
         }
 
-        qualityBtn.onclick = () => { qualityMenu.style.display = (qualityMenu.style.display === 'block') ? 'none' : 'block'; };
-
-        const lines = channelsData.trim().split('\n').filter(l => l.trim() !== "");
-        for (let i = 0; i < lines.length; i += 2) {
-            const name = lines[i].trim();
-            const url = lines[i+1]?.trim();
-            if (name && url) {
-                const card = document.createElement('div');
-                card.className = 'channel-card';
-                card.innerHTML = `<span class="channel-number">${(i/2) + 1}</span><span class="channel-name">${name}</span>`;
-                card.onclick = () => playChannel(url, card);
-                list.appendChild(card);
-                if (i === 0) setTimeout(() => card.click(), 100);
+        // دالة فتح/غلق قائمة الجودة مع دعم الريموت
+        function toggleQMenu() {
+            const isVisible = qMenu.style.display === 'block';
+            qMenu.style.display = isVisible ? 'none' : 'block'; 
+            if (!isVisible) {
+                const firstOpt = qMenu.querySelector('.q-option');
+                if(firstOpt) firstOpt.focus();
             }
+            killTimer();
         }
+
+        qBtn.onclick = (e) => { e.stopPropagation(); toggleQMenu(); };
+        
+        // إصلاح ضغطة الريموت على زر HQ
+        qBtn.onkeydown = (e) => {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                toggleQMenu();
+            }
+        };
+
+        const listDiv = document.getElementById('list');
+        const items = rawChannels.trim().split('\n').filter(x => x.trim());
+        for (let i = 0; i < items.length; i += 2) {
+            const card = document.createElement('div');
+            card.className = 'channel-card'; card.tabIndex = 0;
+            card.innerHTML = `<span class="ch-num">${(i/2)+1}</span><span class="ch-name">${items[i]}</span>`;
+            card.onclick = (e) => { e.stopPropagation(); play(items[i+1], card); };
+            card.onkeydown = (e) => { if(e.key === "Enter") play(items[i+1], card); };
+            listDiv.appendChild(card);
+            if (i === 0) { play(items[i+1], card); currentActiveCard = card; }
+        }
+        window.onload = () => { openUI(); };
     </script>
 </body>
 </html>
