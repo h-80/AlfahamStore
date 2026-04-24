@@ -6,193 +6,145 @@
     <title>Tik Tak - تيك تاك</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <style>
-        :root { --tiktok-red: #fe2c55; --tiktok-blue: #25f4ee; }
-        body, html { margin: 0; padding: 0; height: 100%; background: #000; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: white; overflow: hidden; }
+        :root { --main: #fe2c55; --sub: #25f4ee; }
+        body, html { margin: 0; padding: 0; height: 100%; background: #000; color: white; overflow: hidden; font-family: sans-serif; }
         
-        /* شاشة البداية / تسجيل الدخول */
+        /* شاشة الدخول */
         #login-screen { position: fixed; inset: 0; background: #000; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .logo-text { font-size: 50px; font-weight: bold; margin-bottom: 30px; letter-spacing: -2px; }
-        .google-login-btn { background: white; color: black; padding: 15px 30px; border-radius: 30px; border: none; font-weight: bold; font-size: 16px; cursor: pointer; display: flex; align-items: center; gap: 10px; }
+        .g-btn { background: white; color: black; padding: 15px 30px; border-radius: 30px; border: none; font-weight: bold; cursor: pointer; font-size: 16px; box-shadow: 0 4px 15px rgba(255,255,255,0.2); }
 
         /* التبويبات العلوية */
-        .top-nav { position: absolute; top: 25px; width: 100%; display: flex; justify-content: center; gap: 20px; z-index: 100; font-size: 17px; font-weight: 600; text-shadow: 1px 1px 5px rgba(0,0,0,0.5); }
-        .tab { opacity: 0.6; cursor: pointer; transition: 0.3s; }
-        .tab.active { opacity: 1; border-bottom: 2px solid white; }
+        .top-nav { position: absolute; top: 25px; width: 100%; display: flex; justify-content: center; gap: 20px; z-index: 100; font-size: 18px; font-weight: bold; text-shadow: 1px 1px 4px rgba(0,0,0,0.8); }
+        .active-tab { border-bottom: 2px solid white; }
 
-        /* حاوية الفيديوهات */
+        /* مشغل الفيديو */
         .swiper { width: 100%; height: 100vh; }
-        .video-box { position: relative; width: 100%; height: 100%; background: #000; }
+        .video-wrapper { position: relative; width: 100%; height: 100%; }
         video { width: 100%; height: 100%; object-fit: cover; }
 
-        /* الأزرار التفاعلية الجانبية */
-        .side-actions { position: absolute; right: 12px; bottom: 120px; display: flex; flex-direction: column; align-items: center; gap: 18px; z-index: 10; }
-        .action-item { text-align: center; font-size: 28px; cursor: pointer; }
-        .action-item span { font-size: 12px; display: block; margin-top: 4px; font-weight: bold; }
-        .user-avatar { width: 48px; height: 48px; border-radius: 50%; border: 2px solid white; margin-bottom: 5px; }
+        /* أزرار التفاعل الجانبية */
+        .side-bar { position: absolute; right: 10px; bottom: 110px; display: flex; flex-direction: column; align-items: center; gap: 20px; z-index: 50; }
+        .icon { text-align: center; font-size: 28px; cursor: pointer; text-shadow: 0 0 5px rgba(0,0,0,0.5); }
+        .icon span { font-size: 12px; display: block; }
+        .user-pic { width: 45px; height: 45px; border-radius: 50%; border: 2px solid white; }
 
-        /* معلومات الفيديو أسفل اليمين */
-        .video-meta { position: absolute; bottom: 85px; right: 15px; left: 80px; z-index: 10; pointer-events: none; }
-        .v-user { font-weight: bold; font-size: 18px; margin-bottom: 8px; display: block; }
-        .v-desc { font-size: 15px; line-height: 1.4; opacity: 0.9; }
+        /* معلومات الفيديو */
+        .v-info { position: absolute; bottom: 80px; left: 15px; z-index: 50; max-width: 70%; text-shadow: 1px 1px 3px rgba(0,0,0,1); }
+        .v-user { font-weight: bold; font-size: 17px; margin-bottom: 5px; display: block; }
 
         /* القائمة السفلية */
-        .main-nav { position: fixed; bottom: 0; width: 100%; height: 65px; background: #000; display: flex; align-items: center; border-top: 0.5px solid #222; z-index: 200; }
-        .nav-btn { flex: 1; text-align: center; font-size: 11px; color: #888; cursor: pointer; }
-        .nav-btn.active { color: white; }
-        .plus-icon { background: linear-gradient(to right, var(--tiktok-blue), var(--tiktok-red)); padding: 4px 14px; border-radius: 10px; color: black; font-size: 22px; font-weight: bold; }
-
-        /* صفحة الملف الشخصي */
-        #profile-screen { position: fixed; inset: 0; background: #000; z-index: 500; display: none; flex-direction: column; overflow-y: auto; }
-        .profile-header { padding: 40px 20px; text-align: center; }
-        .p-avatar { width: 90px; height: 90px; border-radius: 50%; border: 2px solid #333; }
-        .p-stats { display: flex; justify-content: center; gap: 30px; margin: 20px 0; }
-        .video-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
-        .grid-video { width: 100%; aspect-ratio: 9/16; background: #111; object-fit: cover; }
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; height: 60px; background: #000; display: flex; justify-content: space-around; align-items: center; border-top: 0.5px solid #222; z-index: 100; }
+        .nav-item { font-size: 11px; text-align: center; color: #888; cursor: pointer; }
+        .add-btn { background: linear-gradient(to right, var(--sub), var(--main)); padding: 4px 15px; border-radius: 8px; color: black; font-size: 20px; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div id="login-screen">
-        <div class="logo-text">Tik Tak</div>
-        <button class="google-login-btn" id="btn-login">
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20">
-            إنشاء حساب / تسجيل دخول
-        </button>
+        <h1 style="font-size: 50px; margin-bottom: 30px;">Tik Tak</h1>
+        <button class="g-btn" id="loginBtn">المتابعة باستخدام Google</button>
     </div>
 
     <div class="top-nav">
-        <div class="tab">اتابعه</div>
-        <div class="tab active">لك</div>
-        <div class="tab">استكشف</div>
+        <span>اتابعه</span>
+        <span class="active-tab">لك</span>
+        <span>استكشف</span>
     </div>
 
     <div class="swiper mySwiper">
-        <div class="swiper-wrapper" id="feed-container">
+        <div class="swiper-wrapper" id="video-feed">
             </div>
     </div>
 
-    <div id="profile-screen">
-        <div style="padding: 15px; font-size: 24px;" onclick="closeProfile()">✕</div>
-        <div class="profile-header">
-            <img src="" id="p-img" class="p-avatar">
-            <h3 id="p-name">المستخدم</h3>
-            <div class="p-stats">
-                <div><b>0</b><br><small>متابعة</small></div>
-                <div><b>0</b><br><small>متابعين</small></div>
-                <div><b>0</b><br><small>إعجاب</small></div>
-            </div>
-            <button style="background:#222; color:white; border:none; padding:10px 30px; border-radius:5px;">تعديل الملف</button>
+    <div class="bottom-nav">
+        <div class="nav-item" style="color:white">🏠<br>الرئيسية</div>
+        <div class="nav-item">👥<br>الأصدقاء</div>
+        <div class="nav-item" onclick="document.getElementById('upload').click()">
+            <span class="add-btn">+</span>
         </div>
-        <div class="video-grid" id="p-grid"></div>
+        <div class="nav-item">💬<br>الوارد</div>
+        <div class="nav-item" onclick="alert('الملف الشخصي سيظهر هنا')">👤<br>الملف</div>
     </div>
 
-    <div class="main-nav">
-        <div class="nav-btn active">🏠<br>الرئيسية</div>
-        <div class="nav-item nav-btn">👥<br>الأصدقاء</div>
-        <div class="nav-btn" onclick="document.getElementById('file-upload').click()">
-            <span class="plus-icon">+</span>
-        </div>
-        <div class="nav-item nav-btn">💬<br>الوارد</div>
-        <div class="nav-btn" onclick="openProfile()">👤<br>الملف الشخصي</div>
-    </div>
-
-    <input type="file" id="file-upload" hidden accept="video/*">
+    <input type="file" id="upload" hidden accept="video/*">
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+        import { getDatabase, ref, push, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
-        // إعداداتك التي أرسلتها
+        // إعدادات Firebase الخاصة بك (قاعدة بيانات الفاهم)
         const firebaseConfig = {
             apiKey: "AIzaSyANGnbMj4S6xS5Xkl7dSIqTXwqYloy55Mw",
             authDomain: "tik-tak-c072a.firebaseapp.com",
+            databaseURL: "https://alfaham-app-default-rtdb.firebaseio.com/",
             projectId: "tik-tak-c072a",
             storageBucket: "tik-tak-c072a.firebasestorage.app",
-            messagingSenderId: "345131210299",
             appId: "1:345131210299:web:6acd8e3198b0238f84ee1e"
         };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        const db = getFirestore(app);
+        const db = getDatabase(app);
         const storage = getStorage(app);
 
-        // تسجيل الدخول بالجيميل
-        document.getElementById('btn-login').onclick = () => {
-            const provider = new GoogleAuthProvider();
-            signInWithPopup(auth, provider).then(() => {
+        // تسجيل الدخول
+        document.getElementById('loginBtn').onclick = () => {
+            signInWithPopup(auth, new GoogleAuthProvider()).then(() => {
                 document.getElementById('login-screen').style.display = 'none';
             });
         };
 
-        onAuthStateChanged(auth, (user) => {
-            if (user) document.getElementById('login-screen').style.display = 'none';
+        onAuthStateChanged(auth, user => {
+            if(user) document.getElementById('login-screen').style.display = 'none';
         });
 
-        // جلب الفيديوهات (الأحدث عالمياً)
-        const q = query(collection(db, "videos"), orderBy("createdAt", "desc"));
-        onSnapshot(q, (snapshot) => {
-            const container = document.getElementById('feed-container');
-            container.innerHTML = '';
-            snapshot.forEach(doc => {
-                const data = doc.data();
-                container.innerHTML += `
+        // جلب الفيديوهات لحظياً من قاعدة البيانات
+        onValue(ref(db, 'videos'), snap => {
+            const feed = document.getElementById('video-feed');
+            feed.innerHTML = '';
+            snap.forEach(child => {
+                const v = child.val();
+                feed.insertAdjacentHTML('afterbegin', `
                     <div class="swiper-slide">
-                        <div class="video-box">
-                            <video src="${data.url}" loop playsinline onclick="this.paused ? this.play() : this.pause()"></video>
-                            <div class="side-actions">
-                                <img src="${data.userPhoto}" class="user-avatar">
-                                <div class="action-item">❤️<span>0</span></div>
-                                <div class="action-item">💬<span>0</span></div>
-                                <div class="action-item">🔗<span>مشاركة</span></div>
+                        <div class="video-wrapper">
+                            <video src="${v.url}" loop playsinline onclick="this.paused?this.play():this.pause()"></video>
+                            <div class="side-bar">
+                                <img src="${v.userPhoto || 'https://via.placeholder.com/50'}" class="user-pic">
+                                <div class="icon">❤️<span>0</span></div>
+                                <div class="icon">💬<span>0</span></div>
+                                <div class="icon">🔗<span>شارك</span></div>
                             </div>
-                            <div class="video-meta">
-                                <span class="v-user">@${data.userName}</span>
-                                <div class="v-desc">${data.caption}</div>
+                            <div class="v-info">
+                                <span class="v-user">@${v.userName}</span>
+                                <div>مقطع جديد على تيك تاك 🎬</div>
                             </div>
                         </div>
-                    </div>`;
+                    </div>`);
             });
-            initSwiper();
+            new Swiper(".mySwiper", { direction: "vertical" });
         });
 
-        // نظام الرفع
-        document.getElementById('file-upload').onchange = async (e) => {
+        // رفع فيديو جديد
+        document.getElementById('upload').onchange = async (e) => {
             const file = e.target.files[0];
             if(!file) return;
-            alert("بدأ رفع الفيديو الخاص بك على تيك تاك...");
-            const sRef = ref(storage, `videos/${Date.now()}_${file.name}`);
-            const upload = await uploadBytes(sRef, file);
-            const url = await getDownloadURL(sRef);
-            await addDoc(collection(db, "videos"), {
-                url, userId: auth.currentUser.uid, userName: auth.currentUser.displayName,
-                userPhoto: auth.currentUser.photoURL, caption: "مقطع جديد على تيك تاك", createdAt: serverTimestamp()
-            });
-            alert("تم النشر بنجاح!");
-        };
-
-        // فتح البروفايل وفلترة فيديوهات المستخدم فقط
-        window.openProfile = async () => {
-            const user = auth.currentUser;
-            if(!user) return;
-            document.getElementById('profile-screen').style.display = 'flex';
-            document.getElementById('p-img').src = user.photoURL;
-            document.getElementById('p-name').innerText = user.displayName;
+            alert("بدأ الرفع إلى قاعدة بيانات تيك تاك...");
+            const fileRef = sRef(storage, 'tiktak/' + Date.now());
+            await uploadBytes(fileRef, file);
+            const url = await getDownloadURL(fileRef);
             
-            const qP = query(collection(db, "videos"), where("userId", "==", user.uid));
-            const snap = await getDocs(qP);
-            const grid = document.getElementById('p-grid');
-            grid.innerHTML = '';
-            snap.forEach(d => {
-                grid.innerHTML += `<video src="${d.data().url}" class="grid-video"></video>`;
+            const newVideo = push(ref(db, 'videos'));
+            await set(newVideo, {
+                url: url,
+                userName: auth.currentUser.displayName,
+                userPhoto: auth.currentUser.photoURL,
+                userId: auth.currentUser.uid,
+                time: Date.now()
             });
+            alert("تم النشر بنجاح! اسحب للتحديث.");
         };
-
-        window.closeProfile = () => { document.getElementById('profile-screen').style.display = 'none'; };
-
-        function initSwiper() { new Swiper(".mySwiper", { direction: "vertical" }); }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 </body>
